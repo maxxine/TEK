@@ -1,0 +1,9 @@
+Building tekcoin
+
+See doc/readme-qt.rst for instructions on building tekcoin QT,
+the intended-for-end-users, nice-graphical-interface, reference
+implementation of tekcoin.
+
+See doc/build-*.txt for instructions on building tekcoind,
+the intended-for-services, no-graphical-interface, reference
+implementation of tekcoin.
