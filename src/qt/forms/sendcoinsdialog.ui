@@ -107,14 +107,14 @@
              <string notr="true"/>
             </property>
             <property name="text">
-             <string>Inputs...</string>
+             <string>Coin Control</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QLabel" name="labelCoinControlAutomaticallySelected">
             <property name="text">
-             <string>automatically selected</string>
+             <string>Low Priority Coins Are Automatically Selected</string>
             </property>
             <property name="margin">
              <number>5</number>

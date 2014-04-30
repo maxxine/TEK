@@ -117,7 +117,7 @@ CoinControlDialog::CoinControlDialog(QWidget *parent) :
     ui->treeWidget->setColumnHidden(COLUMN_PRIORITY_INT64, true); // store priority int64 in this column, but dont show it
    
     // default view is sorted by amount desc
-    sortView(COLUMN_AMOUNT_INT64, Qt::DescendingOrder);
+    sortView(COLUMN_CONFIRMATIONS, Qt::DescendingOrder);
 }
 
 CoinControlDialog::~CoinControlDialog()
