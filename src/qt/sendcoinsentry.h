@@ -39,6 +39,7 @@ public slots:
 
 signals:
     void removeEntry(SendCoinsEntry *entry);
+	void payAmountChanged(); //presstab
 
 private slots:
     void on_deleteButton_clicked();

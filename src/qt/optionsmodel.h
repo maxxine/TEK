@@ -30,6 +30,7 @@ public:
         DisplayAddresses,  // bool
         DetachDatabases,   // bool
         Language,          // QString
+		CoinControlFeatures, // bool added by presstab
         OptionIDRowCount,
     };
 
@@ -49,16 +50,20 @@ public:
     int getDisplayUnit();
     bool getDisplayAddresses();
     QString getLanguage() { return language; }
-
+	bool getCoinControlFeatures(); //line added by presstab
+	
 private:
     int nDisplayUnit;
     bool bDisplayAddresses;
     bool fMinimizeToTray;
     bool fMinimizeOnClose;
     QString language;
-
+	bool fCoinControlFeatures; //presstab
+	
 signals:
     void displayUnitChanged(int unit);
+	void transactionFeeChanged(qint64); //presstab	
+	void coinControlFeaturesChanged(bool); //presstab
 };
 
 #endif // OPTIONSMODEL_H

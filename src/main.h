@@ -591,7 +591,7 @@ public:
         return dPriority > COIN * 1440 / 250;
     }
 
-    int64 GetMinFee(unsigned int nBlockSize=1, bool fAllowFree=false, enum GetMinFee_mode mode=GMF_BLOCK) const;
+    int64 GetMinFee(unsigned int nBlockSize=1, bool fAllowFree=true, enum GetMinFee_mode mode=GMF_BLOCK, unsigned int nBytes=0) const; //line changed by presstab
 
     bool ReadFromDisk(CDiskTxPos pos, FILE** pfileRet=NULL)
     {
