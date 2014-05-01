@@ -43,7 +43,7 @@
     </qresource>
     <qresource prefix="/images">
         <file alias="about">res/images/about.png</file>
-        <file alias="splash">res/images/splash2.jpg</file>
+        <file alias="splash">res/images/splash2.png</file>
         <file alias="wallet_bgcoin">res/images/wallet_bgcoin.png</file>
     </qresource>
     <qresource prefix="/movies">
@@ -69,8 +69,8 @@
         <file alias="es_CL">locale/tekcoin_es_CL.qm</file>
         <file alias="et">locale/tekcoin_et.qm</file>
         <file alias="eu_ES">locale/tekcoin_eu_ES.qm</file>
-        <file alias="da">locale/tekcoin_fa.qm</file>
-        <file alias="da_IR">locale/tekcoin_fa_IR.qm</file>
+        <file alias="fa">locale/tekcoin_fa.qm</file>
+        <file alias="fa_IR">locale/tekcoin_fa_IR.qm</file>
         <file alias="fi">locale/tekcoin_fi.qm</file>
         <file alias="fr">locale/tekcoin_fr.qm</file>
         <file alias="fr_CA">locale/tekcoin_fr_CA.qm</file>
