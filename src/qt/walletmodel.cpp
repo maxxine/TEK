@@ -312,6 +312,12 @@ bool WalletModel::backupWallet(const QString &filename)
     return BackupWallet(*wallet, filename.toLocal8Bit().data());
 }
 
+void WalletModel::getStakeWeightFromValue(const int64& nTime, const int64& nValue, uint64& nWeight) //stake weight addition to code presstab
+{
+   wallet->GetStakeWeightFromValue(nTime, nValue, nWeight);
+}
+
+
 // Handlers for core signals
 static void NotifyKeyStoreStatusChanged(WalletModel *walletmodel, CCryptoKeyStore *wallet)
 {
