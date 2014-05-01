@@ -86,6 +86,7 @@ private:
     QAction *toggleHideAction;
     QAction *exportAction;
     QAction *encryptWalletAction;
+	QAction *unlockWalletAction; //presstab
     QAction *backupWalletAction;
     QAction *changePassphraseAction;
     QAction *aboutQtAction;
