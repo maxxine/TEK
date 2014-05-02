@@ -265,7 +265,7 @@
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>&lt;b&gt;Recent transactions&lt;/b&gt;</string>
+             <string>&lt;b&gt;Recent Transactions&lt;/b&gt;</string>
             </property>
            </widget>
           </item>
@@ -343,6 +343,7 @@
       </spacer>
      </item>
     </layout>
+   
    </item>
   </layout>
  </widget>
