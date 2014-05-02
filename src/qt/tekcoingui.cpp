@@ -249,12 +249,12 @@ void tekcoinGUI::createActions()
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(QIcon(":/icons/tekcoin"), tr("&Show / Hide"), this);
 	
-    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
+    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet"), this);
     encryptWalletAction->setToolTip(tr("Encrypt or decrypt wallet"));
     encryptWalletAction->setCheckable(true);
 	//presstab - adding in unlock wallet feature to gui
-	unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet For PoS..."), this);
-    unlockWalletAction->setToolTip(tr("Unlock the wallet for minting")); //hbn code is setStatusTip - doesn't match up here.  qt5 maybe?
+	unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet"), this);
+    unlockWalletAction->setToolTip(tr("Unlock an Encrypted Wallet")); //hbn code is setStatusTip - doesn't match up here.  qt5 maybe?
     unlockWalletAction->setCheckable(true);
 	//presstab e
     backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
@@ -279,7 +279,7 @@ void tekcoinGUI::createActions()
     connect(changePassphraseAction, SIGNAL(triggered()), this, SLOT(changePassphrase()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
-	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWalletForMint())); //presstab
+	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet())); //presstab
 }
 
 void tekcoinGUI::createMenuBar()
