@@ -5,6 +5,7 @@ INCLUDEPATH += src src/json src/qt
 DEFINES += QT_GUI BOOST_THREAD_USE_LIB BOOST_SPIRIT_THREADSAFE BOOST_THREAD_PROVIDES_GENERIC_SHARED_MUTEX_ON_WIN __NO_SYSTEM_INCLUDES
 CONFIG += no_include_pwd
 CONFIG += static
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 #uncomment the following section to enable building on windows:
 windows:LIBS += -lshlwapi
