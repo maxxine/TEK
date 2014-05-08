@@ -249,7 +249,7 @@
       <widget class="QFrame" name="frame_2">
 		<property name="minimumSize">
 			<size>
-			<width>278</width>
+			<width>365</width>
 			<height>0</height>
 			</size>
 		</property>
@@ -280,9 +280,11 @@
             <property name="text">
              <string notr="true">(out of sync)</string>
             </property>
+			
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
+			
            </widget>
           </item>
           <item>
@@ -322,7 +324,7 @@
        </layout>
       </widget>
      </item>
-     <item>
+    <item>
       <widget class="QLabel" name="label_tekcoin_Intro">
        <property name="text">
         <string/>
