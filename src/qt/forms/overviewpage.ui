@@ -247,6 +247,12 @@
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
       <widget class="QFrame" name="frame_2">
+		<property name="minimumSize">
+			<size>
+			<width>365</width>
+			<height>0</height>
+			</size>
+		</property>
        <property name="frameShape">
         <enum>QFrame::StyledPanel</enum>
        </property>
@@ -259,7 +265,7 @@
           <item>
            <widget class="QLabel" name="label_4">
             <property name="text">
-             <string>&lt;b&gt;Recent transactions&lt;/b&gt;</string>
+             <string>&lt;b&gt;Recent Transactions&lt;/b&gt;</string>
             </property>
            </widget>
           </item>
@@ -274,9 +280,11 @@
             <property name="text">
              <string notr="true">(out of sync)</string>
             </property>
+			
             <property name="alignment">
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
+			
            </widget>
           </item>
           <item>
@@ -316,7 +324,7 @@
        </layout>
       </widget>
      </item>
-     <item>
+    <item>
       <widget class="QLabel" name="label_tekcoin_Intro">
        <property name="text">
         <string/>
@@ -337,6 +345,7 @@
       </spacer>
      </item>
     </layout>
+   
    </item>
   </layout>
  </widget>

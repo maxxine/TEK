@@ -95,6 +95,9 @@ public:
     bool changePassphrase(const SecureString &oldPass, const SecureString &newPass);
     // Wallet backup
     bool backupWallet(const QString &filename);
+	
+	//PoS Information about value and time presstab
+    void getStakeWeightFromValue(const qint64& nTime, const qint64& nValue, quint64& nWeight);
 
     // RAI object for unlocking wallet, returned by requestUnlock()
     class UnlockContext

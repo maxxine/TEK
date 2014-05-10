@@ -52,7 +52,10 @@
 #include <QDesktopServices>
 #include <QTimer>
 #include <QDragEnterEvent>
+#if QT_VERSION < 0x050000 //presstab qt5
 #include <QUrl>
+#endif
+#include <QMimeData> //presstab qt5
 #include <QStyle>
 
 #include <iostream>
@@ -62,6 +65,7 @@ tekcoinGUI::tekcoinGUI(QWidget *parent):
     clientModel(0),
     walletModel(0),
     encryptWalletAction(0),
+	unlockWalletAction(0), //presstab
     changePassphraseAction(0),
     aboutQtAction(0),
     trayIcon(0),
@@ -247,9 +251,15 @@ void tekcoinGUI::createActions()
     optionsAction->setToolTip(tr("Modify configuration options for tekcoin"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(QIcon(":/icons/tekcoin"), tr("&Show / Hide"), this);
-    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet..."), this);
+	
+    encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet"), this);
     encryptWalletAction->setToolTip(tr("Encrypt or decrypt wallet"));
     encryptWalletAction->setCheckable(true);
+	//presstab - adding in unlock wallet feature to gui
+	unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet"), this);
+    unlockWalletAction->setToolTip(tr("Unlock an Encrypted Wallet")); //hbn code is setStatusTip - doesn't match up here.  qt5 maybe?
+    unlockWalletAction->setCheckable(true);
+	//presstab e
     backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
     backupWalletAction->setToolTip(tr("Backup wallet to another location"));
     changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase..."), this);
@@ -272,6 +282,7 @@ void tekcoinGUI::createActions()
     connect(changePassphraseAction, SIGNAL(triggered()), this, SLOT(changePassphrase()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
+	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet())); //presstab
 }
 
 void tekcoinGUI::createMenuBar()
@@ -295,6 +306,7 @@ void tekcoinGUI::createMenuBar()
 
     QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
     settings->addAction(encryptWalletAction);
+	settings->addAction(unlockWalletAction); //presstab
     settings->addAction(changePassphraseAction);
     settings->addSeparator();
     settings->addAction(optionsAction);
@@ -784,6 +796,7 @@ void tekcoinGUI::setEncryptionStatus(int status)
     case WalletModel::Unencrypted:
         labelEncryptionIcon->hide();
         encryptWalletAction->setChecked(false);
+		unlockWalletAction->setChecked(false); //presstab
         changePassphraseAction->setEnabled(false);
         encryptWalletAction->setEnabled(true);
         break;
@@ -792,16 +805,20 @@ void tekcoinGUI::setEncryptionStatus(int status)
         labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptWalletAction->setChecked(true);
+		unlockWalletAction->setChecked(true); //presstab
         changePassphraseAction->setEnabled(true);
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+		unlockWalletAction->setEnabled(false); //presstab
         break;
     case WalletModel::Locked:
         labelEncryptionIcon->show();
         labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
         encryptWalletAction->setChecked(true);
+		unlockWalletAction->setChecked(true);//presstab
         changePassphraseAction->setEnabled(true);
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+		unlockWalletAction->setEnabled(true); //presstab
         break;
     }
 }
@@ -820,8 +837,13 @@ void tekcoinGUI::encryptWallet(bool status)
 
 void tekcoinGUI::backupWallet()
 {
+	#if QT_VERSION < 0x050000 //presstab qt5
     QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-    QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
+    #else
+	QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+	#endif
+	
+	QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
     if(!filename.isEmpty()) {
         if(!walletModel->backupWallet(filename)) {
             QMessageBox::warning(this, tr("Backup Failed"), tr("There was an error trying to save the wallet data to the new location."));
@@ -846,8 +868,10 @@ void tekcoinGUI::unlockWallet()
         AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, this);
         dlg.setModel(walletModel);
         dlg.exec();
-    }
+   }
 }
+
+
 
 void tekcoinGUI::showNormalIfMinimized(bool fToggleHidden)
 {

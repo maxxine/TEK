@@ -14,7 +14,9 @@
 
 #include <QApplication>
 #include <QMessageBox>
+#if QT_VERSION < 0x050000 //presstab qt5
 #include <QTextCodec>
+#endif
 #include <QLocale>
 #include <QTranslator>
 #include <QSplashScreen>
@@ -116,9 +118,11 @@ int main(int argc, char *argv[])
     // Do this early as we don't want to bother initializing if we are just calling IPC
     ipcScanRelay(argc, argv);
 
+	#if QT_VERSION < 0x050000 //presstab qt5
     // Internal string conversion is all UTF-8
     QTextCodec::setCodecForTr(QTextCodec::codecForName("UTF-8"));
     QTextCodec::setCodecForCStrings(QTextCodec::codecForTr());
+	#endif
 
     Q_INIT_RESOURCE(tekcoin);
     QApplication app(argc, argv);
@@ -128,7 +132,7 @@ int main(int argc, char *argv[])
 
     // Command-line options take precedence:
     ParseParameters(argc, argv);
-
+	
     // ... then tekcoin.conf:
     if (!boost::filesystem::is_directory(GetDataDir(false)))
     {

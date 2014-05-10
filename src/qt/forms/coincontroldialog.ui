@@ -470,32 +470,20 @@
      <attribute name="headerStretchLastSection">
       <bool>false</bool>
      </attribute>
-     <column>
+     
+	 <column>
       <property name="text">
        <string/>
       </property>
      </column>
+	 
      <column>
       <property name="text">
        <string>Amount</string>
       </property>
      </column>
-     <column>
-      <property name="text">
-       <string notr="true">Label</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Address</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Date</string>
-      </property>
-     </column>
-     <column>
+	 
+	 <column>
       <property name="text">
        <string>Confirmations</string>
       </property>
@@ -503,31 +491,61 @@
        <string>Confirmed</string>
       </property>
      </column>
+	 
+	 <column>
+      <property name="text">
+       <string>Weight</string>
+      </property>
+     </column>
+	 
+     <column>
+      <property name="text">
+       <string notr="true">Label</string>
+      </property>
+     </column>
+	 
+     <column>
+      <property name="text">
+       <string>Address</string>
+      </property>
+     </column>
+	 
+     <column>
+      <property name="text">
+       <string>Date</string>
+      </property>
+     </column>
+	 
      <column>
       <property name="text">
        <string>Priority</string>
       </property>
      </column>
+	 
      <column>
-      <property name="text">
+      <property name="text"> <!--(invisible) TX HASH  --> 
        <string/>
       </property>
      </column>
+	 
      <column>
-      <property name="text">
+      <property name="text"> <!--(invisible) V_OUT INDEX  --> 
        <string/>
       </property>
      </column>
+	 
      <column>
-      <property name="text">
+      <property name="text"> <!--(invisible) AMOUNT_INT64  --> 
        <string/>
       </property>
      </column>
+	 
      <column>
-      <property name="text">
+      <property name="text"> <!--(invisible) PRIORITY_INT64  -->
        <string/>
       </property>
      </column>
+	 
     </widget>
    </item>
    <item>
