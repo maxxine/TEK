@@ -2119,8 +2119,8 @@ bool CBlock::CheckBlock(bool fCheckPOW, bool fCheckMerkleRoot) const
         return DoS(100, error("CheckBlock() : hashMerkleRoot mismatch"));
 
     // ppcoin: check block signature
-    if (!CheckBlockSignature())
-        return DoS(100, error("CheckBlock() : bad block signature"));
+    //if (!CheckBlockSignature())
+    //    return DoS(100, error("CheckBlock() : bad block signature"));
 
     return true;
 }

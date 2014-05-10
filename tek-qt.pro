@@ -17,11 +17,9 @@ win32 {
 }
 QT       += network
 TEMPLATE = app
-TARGET = TekCoin-Qt
-VERSION = 1.0
+TARGET = Tekcoin-qt
+VERSION = 1.0.0
 INCLUDEPATH += src src/json src/qt
-macx:INCLUDEPATH += /opt/local/include/db48
-
 win32 {
    contains(WINBITS, 32) {
       INCLUDEPATH += C:/$$MSYS/local/include/boost-1_55/
@@ -433,7 +431,7 @@ macx:HEADERS += src/qt/macdockiconhandler.h
 macx:OBJECTIVE_SOURCES += src/qt/macdockiconhandler.mm
 macx:LIBS += -framework Foundation -framework ApplicationServices -framework AppKit
 macx:DEFINES += MAC_OSX MSG_NOSIGNAL=0
-macx:ICON = src/qt/res/icons/bitcoin.icns
+macx:ICON = src/qt/res/icons/tekcoin.icns
 macx:TARGET = "NoirShares Qt"
 
 macx:QMAKE_CFLAGS_THREAD += -pthread
