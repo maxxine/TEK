@@ -1,6 +1,6 @@
 tekcoin: a SHA256D pow/pos coin
 
-Pos/Pow 500% a year
+Pos 500% a year
 1 Pow coin per block
 1 minute block time
 
