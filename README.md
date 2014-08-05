@@ -1,7 +1,7 @@
 tekcoin: a SHA256D pow/pos coin
 
-100 million mintage
-1 coins per block
+Pos/Pow 500% a year
+1 Pow coin per block
 1 minute block time
 
 def port 8514
