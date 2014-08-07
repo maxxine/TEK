@@ -12,7 +12,6 @@
 #include <QTimer>
 
 static const int64 nClientStartupTime = GetTime();
-double GetPoSKernelPS();
 
 ClientModel::ClientModel(OptionsModel *optionsModel, QObject *parent) :
     QObject(parent), optionsModel(optionsModel),
@@ -118,11 +117,6 @@ double ClientModel::GetDifficulty() const
     }
 
     return dDiff;
-}
-
-double ClientModel::getPosKernalPS()
-{
-    return GetPoSKernelPS();
 }
 
 bool ClientModel::isTestNet() const
