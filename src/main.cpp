@@ -36,6 +36,7 @@ set<pair<COutPoint, unsigned int> > setStakeSeen;
 uint256 hashGenesisBlock = hashGenesisBlockOfficial;
 static CBigNum bnProofOfWorkLimit(~uint256(0) >> 20);
 static CBigNum bnProofOfStakeLimit(~uint256(0) >> 24);
+static CBigNum bnProofOfStakeLimitV2(~uint256(0) >> 18);
 static CBigNum bnProofOfStakeHardLimit(~uint256(0) >> 30);
 
 
@@ -943,6 +944,15 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
     return pblockOrphan->hashPrevBlock;
 }
 
+//changes the stake limit like a boss
+static CBigNum GetProofOfStakeLimit(int nHeight)
+{
+    if (nHeight>=HARDFORK_1)
+        return bnProofOfStakeLimitV2;
+    else
+        return bnProofOfStakeLimit;
+}
+
 // miner's coin base reward based on nBits
 int64 GetProofOfWorkReward(int nHeight, int64 nFees, uint256 prevHash)
 {
@@ -1032,7 +1042,7 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 
 unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    CBigNum bnTargetLimit = bnProofOfWorkLimit;
+    CBigNum bnTargetLimit = GetProofOfStakeLimit(pindexLast->nHeight);
 
     if(fProofOfStake)
     {
@@ -1041,10 +1051,12 @@ unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fP
             bnTargetLimit = bnProofOfStakeLimit;
         else
         {
-            if(pindexLast->nHeight + 1 > 15000)
+            if(pindexLast->nHeight >= HARDFORK_1)
+				bnTargetLimit = GetProofOfStakeLimit(pindexLast->nHeight);
+			else if(pindexLast->nHeight + 1 > 15000)
                 bnTargetLimit = bnProofOfStakeLimit;
             else if(pindexLast->nHeight + 1 > 14060)
-                bnTargetLimit = bnProofOfStakeHardLimit;
+                CBigNum bnTargetLimit = bnProofOfWorkLimit;
         }
     }
 
@@ -1060,30 +1072,27 @@ unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fP
 
     int64 nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
 
-    /*if(pindexLast->nHeight+1 > 10000)
+	if(fProofOfStake)
     {
-        if (nActualSpacing < nTargetSpacing/4)
-            nActualSpacing = nTargetSpacing/4;
-        if (nActualSpacing > nTargetSpacing*4)
-            nActualSpacing = nTargetSpacing*4;
-    }
-    else if(pindexLast->nHeight+1 > 5000)
-    {
-        if (nActualSpacing < nTargetSpacing/8)
-            nActualSpacing = nTargetSpacing/8;
-        if (nActualSpacing > nTargetSpacing*4)
-            nActualSpacing = nTargetSpacing*4;
-    }
-    else
-    {
-        if (nActualSpacing < nTargetSpacing/16)
-            nActualSpacing = nTargetSpacing/16;
-        if (nActualSpacing > nTargetSpacing*4)
-            nActualSpacing = nTargetSpacing*4;
-    }*/
 
-    // ppcoin: target change every block
-    // ppcoin: retarget with exponential moving toward target spacing
+         if (pindexLast->nHeight >= HARDFORK_1){
+                if (nActualSpacing < 0)
+                nActualSpacing = nStakeTargetSpacing;
+        }
+
+    }
+
+
+	if(fProofOfStake)
+    {
+
+         if (pindexLast->nHeight >= HARDFORK_1){
+                if (nActualSpacing < 0)
+                nActualSpacing = nStakeTargetSpacing;
+        }
+
+   }
+	
     CBigNum bnNew;
     bnNew.SetCompact(pindexPrev->nBits);
     int64 nTargetSpacing = fProofOfStake? nStakeTargetSpacing : min(nTargetSpacingWorkMax, (int64) nStakeTargetSpacing * (1 + pindexLast->nHeight - pindexPrev->nHeight));
