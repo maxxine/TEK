@@ -1042,7 +1042,7 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 
 unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-	CBigNum bnTargetLimit = bnProofOfWorkLimit;
+    CBigNum bnTargetLimit = bnProofOfWorkLimit;
 
     if(fProofOfStake)
     {
@@ -1052,12 +1052,13 @@ unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fP
         else
         {
             if(pindexLast->nHeight >= HARDFORK_1)
-				bnTargetLimit = GetProofOfStakeLimit(pindexLast->nHeight);
-			else if(pindexLast->nHeight + 1 > 15000)
+                bnTargetLimit = bnProofOfStakeLimitV2;
+            else if(pindexLast->nHeight + 1 > 15000)
                 bnTargetLimit = bnProofOfStakeLimit;
             else if(pindexLast->nHeight + 1 > 14060)
-                CBigNum bnTargetLimit = bnProofOfWorkLimit;
+                bnTargetLimit = bnProofOfStakeHardLimit;
         }
+
     }
 
     if (pindexLast == NULL)
