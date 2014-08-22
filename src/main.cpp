@@ -1042,7 +1042,7 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 
 unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    CBigNum bnTargetLimit = GetProofOfStakeLimit(pindexLast->nHeight);
+	CBigNum bnTargetLimit = bnProofOfWorkLimit;
 
     if(fProofOfStake)
     {
