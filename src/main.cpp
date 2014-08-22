@@ -1072,16 +1072,6 @@ unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fP
 
     int64 nActualSpacing = pindexPrev->GetBlockTime() - pindexPrevPrev->GetBlockTime();
 
-	if(fProofOfStake)
-    {
-
-         if (pindexLast->nHeight >= HARDFORK_1){
-                if (nActualSpacing < 0)
-                nActualSpacing = nStakeTargetSpacing;
-        }
-
-    }
-
 
 	if(fProofOfStake)
     {
