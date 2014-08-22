@@ -36,7 +36,7 @@ static const int64 MAX_MINT_PROOF_OF_WORK = 100 * COIN;	//100 Coin per block
 static const int64 MAX_MINT_PROOF_OF_STAKE = 0.05 * MAX_MINT_PROOF_OF_WORK;	//5% annual interest
 static const int64 MIN_TXOUT_AMOUNT = MIN_TX_FEE;
 static const unsigned int MAX_TX_COMMENT_LEN = 268; // tekcoin: 256 bytes + 12 little extra
-static const int64 HARDFORK_1 = 505000;
+static const int64 HARDFORK_1 = 506500;
 
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
