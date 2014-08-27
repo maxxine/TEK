@@ -944,13 +944,19 @@ uint256 WantedByOrphan(const CBlock* pblockOrphan)
     return pblockOrphan->hashPrevBlock;
 }
 
-//changes the stake limit like a boss
-static CBigNum GetProofOfStakeLimit(int nHeight)
+// select stake target limit according to hard-coded conditions
+CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
 {
-    if (nHeight>=HARDFORK_1)
-        return bnProofOfStakeLimitV2;
-    else
+    if(fTestNet) // separate proof of stake target limit for testnet
         return bnProofOfStakeLimit;
+    if(nTime > TARGETS_SWITCH_TIME || nHeight >= HARDFORK_1) // 18 bits since 20 July 2013
+        return bnProofOfStakeLimitV2;
+    if(nHeight + 1 > 15000) // 24 bits since block 15000
+        return bnProofOfStakeLimit;
+    if(nHeight + 1 > 14060) // 31 bits since block 14060 until 15000
+        return bnProofOfStakeHardLimit;
+
+    return bnProofOfWorkLimit; // return bnProofOfWorkLimit of none matched
 }
 
 // miner's coin base reward based on nBits
@@ -972,7 +978,7 @@ int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTi
     CBigNum bnRewardCoinYearLimit = MAX_MINT_PROOF_OF_STAKE; // Base stake mint rate, 100% year interest
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
-    CBigNum bnTargetLimit = bnProofOfStakeLimit;
+    CBigNum bnTargetLimit = GetProofOfStakeLimit(0, nTime);
     bnTargetLimit.SetCompact(bnTargetLimit.GetCompact());
 
     // tekcoin: reward for coin-year is cut in half every 64x multiply of PoS difficulty
@@ -1011,13 +1017,10 @@ static const int64 nTargetTimespan = 0.16 * 24 * 60 * 60;  // 4-hour
 static const int64 nTargetSpacingWorkMax = 12 * nStakeTargetSpacing; // 2-hour
 
 //
-// minimum amount of work that could possibly be required nTime after
-// minimum work required was nBase
+// maximum nBits value could possible be required nTime after
 //
-unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
+unsigned int ComputeMaxBits(CBigNum bnTargetLimit, unsigned int nBase, int64 nTime)
 {
-    CBigNum bnTargetLimit = bnProofOfWorkLimit;
-
     CBigNum bnResult;
     bnResult.SetCompact(nBase);
     bnResult *= 2;
@@ -1032,6 +1035,23 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
     return bnResult.GetCompact();
 }
 
+//
+// minimum amount of work that could possibly be required nTime after
+// minimum proof-of-work required was nBase
+//
+unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
+{
+    return ComputeMaxBits(bnProofOfWorkLimit, nBase, nTime);
+}
+
+//
+// minimum amount of stake that could possibly be required nTime after
+// minimum proof-of-stake required was nBase
+//
+unsigned int ComputeMinStake(unsigned int nBase, int64 nTime, unsigned int nBlockTime)
+{
+    return ComputeMaxBits(GetProofOfStakeLimit(0, nBlockTime), nBase, nTime);
+}
 // ppcoin: find last block index up to pindex
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake)
 {
@@ -1042,24 +1062,7 @@ const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfSta
 
 unsigned int static GetNextTargetRequired(const CBlockIndex* pindexLast, bool fProofOfStake)
 {
-    CBigNum bnTargetLimit = bnProofOfWorkLimit;
-
-    if(fProofOfStake)
-    {
-        // Proof-of-Stake blocks has own target limit since nVersion=3 supermajority on mainNet and always on testNet
-        if(fTestNet)
-            bnTargetLimit = bnProofOfStakeLimit;
-        else
-        {
-            if(pindexLast->nHeight >= HARDFORK_1)
-                bnTargetLimit = bnProofOfStakeLimitV2;
-            else if(pindexLast->nHeight + 1 > 15000)
-                bnTargetLimit = bnProofOfStakeLimit;
-            else if(pindexLast->nHeight + 1 > 14060)
-                bnTargetLimit = bnProofOfStakeHardLimit;
-        }
-
-    }
+        CBigNum bnTargetLimit = !fProofOfStake ? bnProofOfWorkLimit : GetProofOfStakeLimit(pindexLast->nHeight, pindexLast->nTime);
 
     if (pindexLast == NULL)
         return bnTargetLimit.GetCompact(); // genesis block
@@ -2256,7 +2259,15 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         CBigNum bnNewBlock;
         bnNewBlock.SetCompact(pblock->nBits);
         CBigNum bnRequired;
-        bnRequired.SetCompact(ComputeMinWork(GetLastBlockIndex(pcheckpoint, pblock->IsProofOfStake())->nBits, deltaTime));
+
+		CBlockIndex* pindexPrev = pindexBest;
+
+		if (pblock->IsProofOfStake()){
+            bnRequired.SetCompact(ComputeMinStake(GetLastBlockIndex(pcheckpoint, true)->nBits, deltaTime, pblock->nTime));
+		}else{
+            bnRequired.SetCompact(ComputeMinWork(GetLastBlockIndex(pcheckpoint, false)->nBits, deltaTime));
+		}
+
         if (bnNewBlock > bnRequired)
         {
             if (pfrom)
