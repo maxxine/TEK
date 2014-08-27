@@ -956,7 +956,7 @@ CBigNum inline GetProofOfStakeLimit(int nHeight, unsigned int nTime)
     if(nHeight + 1 > 14060) // 31 bits since block 14060 until 15000
         return bnProofOfStakeHardLimit;
 
-    return bnProofOfWorkLimit; // return bnProofOfWorkLimit of none matched
+    return bnProofOfStakeLimit; // return bnProofOfWorkLimit of none matched
 }
 
 // miner's coin base reward based on nBits
@@ -978,7 +978,7 @@ int64 GetProofOfStakeReward(int64 nCoinAge, unsigned int nBits, unsigned int nTi
     CBigNum bnRewardCoinYearLimit = MAX_MINT_PROOF_OF_STAKE; // Base stake mint rate, 100% year interest
     CBigNum bnTarget;
     bnTarget.SetCompact(nBits);
-    CBigNum bnTargetLimit = GetProofOfStakeLimit(0, nTime);
+    CBigNum bnTargetLimit = GetProofOfStakeLimit(15001, nTime);
     bnTargetLimit.SetCompact(bnTargetLimit.GetCompact());
 
     // tekcoin: reward for coin-year is cut in half every 64x multiply of PoS difficulty
@@ -1050,7 +1050,7 @@ unsigned int ComputeMinWork(unsigned int nBase, int64 nTime)
 //
 unsigned int ComputeMinStake(unsigned int nBase, int64 nTime, unsigned int nBlockTime)
 {
-    return ComputeMaxBits(GetProofOfStakeLimit(0, nBlockTime), nBase, nTime);
+    return ComputeMaxBits(GetProofOfStakeLimit(15001, nBlockTime), nBase, nTime);
 }
 // ppcoin: find last block index up to pindex
 const CBlockIndex* GetLastBlockIndex(const CBlockIndex* pindex, bool fProofOfStake)
