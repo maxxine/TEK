@@ -305,11 +305,12 @@ void tekcoinGUI::createMenuBar()
     file->addAction(quitAction);
 
     QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
-    settings->addAction(encryptWalletAction);
-	settings->addAction(unlockWalletAction); //presstab
-    settings->addAction(changePassphraseAction);
-    settings->addSeparator();
     settings->addAction(optionsAction);
+	
+	QMenu *wallet = appMenuBar->addMenu(tr("&Wallet")); 
+    wallet->addAction(encryptWalletAction);
+	wallet->addAction(unlockWalletAction); //presstab
+    wallet->addAction(changePassphraseAction);
 
     QMenu *help = appMenuBar->addMenu(tr("&Help"));
     help->addAction(openRPCConsoleAction);
