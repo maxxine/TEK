@@ -39,7 +39,6 @@ static CBigNum bnProofOfStakeLimit(~uint256(0) >> 24);
 static CBigNum bnProofOfStakeLimitV2(~uint256(0) >> 18);
 static CBigNum bnProofOfStakeHardLimit(~uint256(0) >> 30);
 
-
 static CBigNum bnProofOfWorkLimitTestNet(~uint256(0) >> 16);
 static CBigNum bnProofOfStakeLimitTestNet(~uint256(0) >> 20);
 
@@ -77,9 +76,7 @@ int64 nHPSTimerStart;
 
 // Settings
 int64 nTransactionFee = MIN_TX_FEE;
-
-
-
+int64 nSplitThreshold = DEF_SPLIT_AMOUNT;
 
 //////////////////////////////////////////////////////////////////////////////
 //
