@@ -190,7 +190,8 @@ HEADERS += src/qt/tekcoingui.h \
     src/qt/rpcconsole.h \
     src/version.h \
     src/netbase.h \
-    src/clientversion.h
+    src/clientversion.h \
+	src/qt/blockbrowser.h
 
 SOURCES += src/qt/tekcoin.cpp src/qt/tekcoingui.cpp \
     src/qt/transactiontablemodel.cpp \
@@ -253,7 +254,8 @@ SOURCES += src/qt/tekcoin.cpp src/qt/tekcoingui.cpp \
     src/qt/qtipcserver.cpp \
     src/qt/rpcconsole.cpp \
     src/noui.cpp \
-    src/kernel.cpp
+    src/kernel.cpp \
+	src/qt/blockbrowser.cpp
 
 RESOURCES += \
     src/qt/tekcoin.qrc
@@ -271,7 +273,8 @@ FORMS += \
     src/qt/forms/sendcoinsentry.ui \
     src/qt/forms/askpassphrasedialog.ui \
     src/qt/forms/rpcconsole.ui \
-    src/qt/forms/optionsdialog.ui
+    src/qt/forms/optionsdialog.ui \
+	src/qt/forms/blockbrowser.ui
 
 contains(USE_QRCODE, 1) {
 HEADERS += src/qt/qrcodedialog.h
