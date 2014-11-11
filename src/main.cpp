@@ -77,6 +77,7 @@ int64 nHPSTimerStart;
 // Settings
 int64 nTransactionFee = MIN_TX_FEE;
 int64 nSplitThreshold = DEF_SPLIT_AMOUNT;
+extern enum Checkpoints::CPMode CheckpointsMode;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -2156,18 +2157,14 @@ bool CBlock::AcceptBlock()
     if (!Checkpoints::CheckHardened(nHeight, hash))
         return DoS(100, error("AcceptBlock() : rejected by hardened checkpoint lock-in at %d", nHeight));
 
-    // ppcoin: check that the block satisfies synchronized checkpoint
-    if (!Checkpoints::CheckSync(hash, pindexPrev))
-    {
-        if(!GetBoolArg("-nosynccheckpoints", false))
-        {
-            return error("AcceptBlock() : rejected by synchronized checkpoint");
-        }
-        else
-        {
-            strMiscWarning = _("WARNING: syncronized checkpoint violation detected, but skipped!");
-        }
-    }
+    bool cpSatisfies = Checkpoints::CheckSync(hash, pindexPrev); 
+ 
+    // Check that the block satisfies synchronized checkpoint 
+    if (CheckpointsMode == Checkpoints::STRICT && !cpSatisfies) 
+         return error("AcceptBlock() : rejected by synchronized checkpoint"); 
+ 
+    if (CheckpointsMode == Checkpoints::ADVISORY && !cpSatisfies) 
+         strMiscWarning = _("WARNING: syncronized checkpoint violation detected, but skipped!"); 
 
     // Reject block.nVersion < 3 blocks since 95% threshold on mainNet and always on testNet:
     if (nVersion < 3 && ((!fTestNet && nHeight > 14060) || (fTestNet && nHeight > 0)))
@@ -2805,7 +2802,7 @@ string GetWarnings(string strFor)
     if (GetBoolArg("-testsafemode"))
         strRPC = "test";
 
-    // ppcoin: wallet lock warning for minting
+    // wallet lock warning for minting
     if (strMintWarning != "")
     {
         nPriority = 0;
@@ -2819,19 +2816,20 @@ string GetWarnings(string strFor)
         strStatusBar = strMiscWarning;
     }
 
-    // ppcoin: should not enter safe mode for longer invalid chain
-    // ppcoin: if sync-checkpoint is too old do not enter safe mode
-    if (Checkpoints::IsSyncCheckpointTooOld(60 * 60 * 24 * 100) && !fTestNet && !IsInitialBlockDownload())
-    {
-        nPriority = 100;
-        //strStatusBar = "WARNING: Checkpoint is too old. Wait for block chain to download, or notify developers.";
-    }
+    // Should not enter safe mode for longer invalid chain 
+    // If sync-checkpoint is too old do not enter safe mode 
+    // Display warning only in the STRICT mode 
+    if (CheckpointsMode == Checkpoints::STRICT && Checkpoints::IsSyncCheckpointTooOld(60 * 60 * 24 * 10) && !fTestNet && !IsInitialBlockDownload()) 
+    { 
+        nPriority = 100; 
+        strStatusBar = _("WARNING: Checkpoint is too old. Wait for block chain to download, or notify developers."); 
+    } 
 
-    // ppcoin: if detected invalid checkpoint enter safe mode
+    // if detected invalid checkpoint enter safe mode
     if (Checkpoints::hashInvalidCheckpoint != 0)
     {
         nPriority = 3000;
-        strStatusBar = strRPC = "WARNING: Invalid checkpoint found! Displayed transactions may not be correct! You may need to upgrade, or notify developers.";
+        strStatusBar = strRPC = _("WARNING: Invalid checkpoint found! Displayed transactions may not be correct! You may need to upgrade, or notify developers.");
     }
 
     // Alerts
@@ -2845,7 +2843,7 @@ string GetWarnings(string strFor)
                 nPriority = alert.nPriority;
                 strStatusBar = alert.strStatusBar;
                 if (nPriority > 1000)
-                    strRPC = strStatusBar;  // ppcoin: safe mode for high alert
+                    strRPC = strStatusBar;  // safe mode for high alert
             }
         }
     }
