@@ -11,7 +11,7 @@
 const std::string CLIENT_NAME("tekcoin");
 
 // Client version number
-#define CLIENT_VERSION_SUFFIX   "-TEK"
+#define CLIENT_VERSION_SUFFIX   "-noise23"
 
 
 // The following part of the code determines the CLIENT_BUILD variable.

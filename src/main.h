@@ -41,6 +41,10 @@ static const int64 TARGETS_SWITCH_TIME =  1409078040;
 inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONEY); }
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
+/** Split Threshold Default */ 
+static const int64 DEF_SPLIT_AMOUNT = 30 * COIN; 
+/** Split Threshold Max */
+static const int64 MAX_SPLIT_AMOUNT = 1010 * COIN; 
 
 #ifdef USE_UPNP
 static const int fHaveUPnP = true;
@@ -83,10 +87,10 @@ extern std::map<uint256, CBlock*> mapOrphanBlocks;
 
 // Settings
 extern int64 nTransactionFee;
+extern int64 nSplitThreshold;
 
 // Minimum disk space required - used in CheckDiskSpace()
 static const uint64 nMinDiskSpace = 52428800;
-
 
 class CReserveKey;
 class CTxDB;

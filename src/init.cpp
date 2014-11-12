@@ -26,6 +26,7 @@ using namespace boost;
 
 CWallet* pwalletMain;
 CClientUIInterface uiInterface;
+enum Checkpoints::CPMode CheckpointsMode;
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -243,7 +244,7 @@ std::string HelpMessage()
         "  -listen                " + _("Accept connections from outside (default: 1 if no -proxy or -connect)") + "\n" +
         "  -bind=<addr>           " + _("Bind to given address. Use [host]:port notation for IPv6") + "\n" +
         "  -dnsseed               " + _("Find peers using DNS lookup (default: 0)") + "\n" +
-        "  -nosynccheckpoints     " + _("Disable sync checkpoints (default: 0)") + "\n" +
+		"  -cppolicy              " + _("Sync checkpoints policy (default: strict)") + "\n" +
         "  -banscore=<n>          " + _("Threshold for disconnecting misbehaving peers (default: 100)") + "\n" +
         "  -bantime=<n>           " + _("Number of seconds to keep misbehaving peers from reconnecting (default: 86400)") + "\n" +
         "  -maxreceivebuffer=<n>  " + _("Maximum per-connection receive buffer, <n>*1000 bytes (default: 5000)") + "\n" +
@@ -281,6 +282,7 @@ std::string HelpMessage()
         "  -upgradewallet         " + _("Upgrade wallet to latest format") + "\n" +
         "  -keypool=<n>           " + _("Set key pool size to <n> (default: 100)") + "\n" +
         "  -rescan                " + _("Rescan the block chain for missing wallet transactions") + "\n" +
+    	"  -splitthreshold=<n>    " + _("Set stake split threshold within range (default: 30, max: 1010)") + "\n" +
         "  -salvagewallet         " + _("Attempt to recover private keys from a corrupt wallet.dat") + "\n" +
         "  -checkblocks=<n>       " + _("How many blocks to check at startup (default: 2500, 0 = all)") + "\n" +
         "  -checklevel=<n>        " + _("How thorough the block verification is (0-6, default: 1)") + "\n" +
@@ -349,6 +351,18 @@ bool AppInit2()
 
     // ********************************************************* Step 2: parameter interactions
 
+		CheckpointsMode = Checkpoints::STRICT; 
+    std::string strCpMode = GetArg("-cppolicy", "strict"); 
+ 
+    if(strCpMode == "strict") 
+        CheckpointsMode = Checkpoints::STRICT; 
+ 
+    if(strCpMode == "advisory") 
+        CheckpointsMode = Checkpoints::ADVISORY; 
+ 
+    if(strCpMode == "permissive") 
+        CheckpointsMode = Checkpoints::PERMISSIVE; 
+	
     fTestNet = GetBoolArg("-testnet");
     if (fTestNet) {
         SoftSetBoolArg("-irc", true);
@@ -523,6 +537,18 @@ bool AppInit2()
         if (r == CDBEnv::RECOVER_FAIL)
             return InitError(_("wallet.dat corrupt, salvage failed"));
     }
+	
+        // Split threshold
+	    if (mapArgs.count("-splitthreshold")) 
+    { 
+       if (!ParseMoney(mapArgs["-splitthreshold"], nSplitThreshold)) 
+           return InitError(strprintf(_("Invalid amount for -splitthreshold=<amount>: '%s'"), mapArgs["-splitthreshold"].c_str())); 
+       else { 
+           if (nSplitThreshold > MAX_SPLIT_AMOUNT) 
+               nSplitThreshold = MAX_SPLIT_AMOUNT; 
+       } 
+       printf("splitthreshold set to %"PRI64d"\n",nSplitThreshold); 
+    } 
 
     // ********************************************************* Step 6: network initialization
 
