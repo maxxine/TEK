@@ -5,6 +5,13 @@
 USE_UPNP:=0
 USE_IPV6:=1
 
+BOOST_INCLUDE_PATH=/usr/local/include
+BOOST_LIB_PATH=/usr/local/lib
+BDB_INCLUDE_PATH=/usr/local/include/db48
+BDB_LIB_PATH=/usr/local/lib/db48
+OPENSSL_INCLUDE_PATH=/usr/local/include
+OPENSSL_LIB_PATH=/usr/local/lib
+
 LINK:=$(CXX)
 
 DEFS=-DBOOST_SPIRIT_THREADSAFE
@@ -52,7 +59,6 @@ endif
 LIBS+= \
  -Wl,-B$(LMODE2) \
    -l z \
-   -l dl \
    -l pthread
 
 
