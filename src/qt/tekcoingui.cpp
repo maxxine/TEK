@@ -198,6 +198,8 @@ tekcoinGUI::tekcoinGUI(QWidget *parent):
     connect(addressBookPage, SIGNAL(verifyMessage(QString)), this, SLOT(gotoVerifyMessageTab(QString)));
     // Clicking on "Sign Message" in the receive coins page sends you to the sign message tab
     connect(receiveCoinsPage, SIGNAL(signMessage(QString)), this, SLOT(gotoSignMessageTab(QString)));
+	// Clicking on "Block Explorer" in the transaction page sends you to the blockbrowser
+    connect(transactionView, SIGNAL(blockBrowserSignal(QString)), this, SLOT(gotoBlockBrowser(QString)));
 
     gotoOverviewPage();
 }
@@ -304,6 +306,7 @@ void tekcoinGUI::createActions()
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
 	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet())); //presstab
+	connect(blockAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
 }
 
 void tekcoinGUI::createMenuBar()
@@ -732,6 +735,14 @@ void tekcoinGUI::gotoAddressBookPage()
     exportAction->setEnabled(true);
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
     connect(exportAction, SIGNAL(triggered()), addressBookPage, SLOT(exportClicked()));
+}
+
+void tekcoinGUI::gotoBlockBrowser(QString transactionId)
+{
+    if(!transactionId.isEmpty())
+    blockBrowser->setTransactionId(transactionId);
+    
+    blockBrowser->show();
 }
 
 void tekcoinGUI::gotoReceiveCoinsPage()
