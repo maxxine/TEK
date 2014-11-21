@@ -130,6 +130,7 @@ TransactionView::TransactionView(QWidget *parent) :
     QAction *editLabelAction = new QAction(tr("Edit label"), this);
 	QAction *copyTxID = new QAction(tr("Copy Tx ID"), this);
     QAction *showDetailsAction = new QAction(tr("Show transaction details"), this);
+	QAction *showBlockBrowser = new QAction(tr("Show transaction in block explorer"), this);
 
     contextMenu = new QMenu();
     contextMenu->addAction(copyAddressAction);
@@ -138,6 +139,7 @@ TransactionView::TransactionView(QWidget *parent) :
     contextMenu->addAction(editLabelAction);
 	contextMenu->addAction(copyTxID);
     contextMenu->addAction(showDetailsAction);
+	contextMenu->addAction(showBlockBrowser);
 
     // Connect actions
     connect(dateWidget, SIGNAL(activated(int)), this, SLOT(chooseDate(int)));
@@ -154,6 +156,7 @@ TransactionView::TransactionView(QWidget *parent) :
     connect(editLabelAction, SIGNAL(triggered()), this, SLOT(editLabel()));
 	connect(copyTxID, SIGNAL(triggered()), this, SLOT(copyTx()));
     connect(showDetailsAction, SIGNAL(triggered()), this, SLOT(showDetails()));
+	connect(showBlockBrowser, SIGNAL(triggered()), this, SLOT(showBrowser()));
 }
 
 void TransactionView::setModel(WalletModel *model)
@@ -441,4 +444,17 @@ void TransactionView::focusTransaction(const QModelIndex &idx)
     transactionView->scrollTo(targetIdx);
     transactionView->setCurrentIndex(targetIdx);
     transactionView->setFocus();
+}
+
+void TransactionView::showBrowser()
+{
+    if(!transactionView->selectionModel())
+        return;
+    QModelIndexList selection = transactionView->selectionModel()->selectedRows();
+    QString transactionId;
+
+	if(!selection.isEmpty())
+    transactionId = selection.at(0).data(TransactionTableModel::TxIDRole).toString();
+
+ emit blockBrowserSignal(transactionId);
 }

@@ -179,6 +179,7 @@ public:
     bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, const CCoinControl *coinControl=NULL); //presstab
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey);
 	bool GetStakeWeightFromValue(const int64& nTime, const int64& nValue, uint64& nWeight); //presstab - weight in coin control dialog
+	bool GetStakeWeight(const CKeyStore& keystore, uint64& nMinWeight, uint64& nMaxWeight, uint64& nWeight);
     bool CreateCoinStake(const CKeyStore& keystore, unsigned int nBits, int64 nSearchInterval, CTransaction& txNew);
     std::string SendMoney(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew, bool fAskFee=false); //presstab
     std::string SendMoneyToDestination(const CTxDestination &address, int64 nValue, CWalletTx& wtxNew, bool fAskFee=false); //presstab
