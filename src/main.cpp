@@ -2790,7 +2790,7 @@ bool LoadExternalBlockFile(FILE* fileIn)
 extern map<uint256, CAlert> mapAlerts;
 extern CCriticalSection cs_mapAlerts;
 
-static string strMintMessage = "Info: Minting suspended due to locked wallet.";
+static string strMintMessage;
 static string strMintWarning;
 
 string GetWarnings(string strFor)
@@ -4381,6 +4381,8 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
 
     // Make this thread recognisable as the mining thread
     RenameThread("tekcoin-miner");
+	
+    bool fTryToSync = true;
 
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
@@ -4392,6 +4394,7 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
             return;
         while (vNodes.empty() || IsInitialBlockDownload())
         {
+            fTryToSync = true;
             Sleep(1000);
             if (fShutdown)
                 return;
@@ -4401,10 +4404,20 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
 
         while (pwallet->IsLocked())
         {
-            strMintWarning = strMintMessage;
             Sleep(1000);
+            if (fShutdown)
+                return;
         }
-        strMintWarning = "";
+
+		    if (fTryToSync)
+        {
+            fTryToSync = false;
+            if (vNodes.size() < 3 || nBestHeight < GetNumBlocksOfPeers())
+            {
+                Sleep(60000);
+                continue;
+            }
+        }
 
         //
         // Create new block
