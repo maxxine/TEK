@@ -20,6 +20,9 @@ unsigned int nModifierInterval = MODIFIER_INTERVAL;
 static std::map<int, unsigned int> mapStakeModifierCheckpoints =
     boost::assign::map_list_of
     ( 0, 0x0e00670bu )
+    ( 1, 0xbc4b99b6u )
+    ( 474965, 0xb7647d74u )
+    ( 683658, 0x433df9ccu )   // modifierchecksum
     ;
 
 // Get time weight - added presstab for weight calc in coin control
