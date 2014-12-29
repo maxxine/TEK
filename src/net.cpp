@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2013  The tekcoin developer
+// Copyright (c) 2013-2015  The Tekcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -1149,7 +1149,11 @@ void MapPort()
 // The first name is used as information source for addrman.
 // The second name should resolve to a list of seed addresses.
 static const char *strDNSSeed[][2] = {
-    {"", ""},
+    {"node1", "node1.tekcoin.uk"},
+    {"node2", "node2.tekcoin.uk"},
+    {"node3", "node3.tekcoin.uk"},
+    {"node4", "node4.tekcoin.uk"},
+    {"node5", "node5.tekcoin.uk"},
 };
 
 void ThreadDNSAddressSeed(void* parg)

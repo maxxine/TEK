@@ -1,4 +1,4 @@
-// Copyright (c) 2013  The tekcoin developer
+// Copyright (c) 2013-2015  The Tekcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 
@@ -28,6 +28,7 @@ static MapCheckpoints mapCheckpoints =
 		( 1, uint256("0x000002f4956b80f69954f67781e369e3ea5155d93fc8f68e5e0972035ad5f57f"))
 		( 474965, uint256("0x000000000000627be2476468199e26aaf5f6309487684716dbeae072921f04d0"))
 		( 683658, uint256("0x0000000000008c51b5caee62b2f51179e722863981d6f99249a752c7502759f3"))
+		( 717883, uint256("0x000000000001a968fb7b33e08bc184b3a489661c4e7bc2b77a5ea993a2cef5b7"))
         ;
 
 
