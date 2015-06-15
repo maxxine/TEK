@@ -282,17 +282,24 @@ bool WalletModel::setWalletEncrypted(bool encrypted, const SecureString &passphr
     }
 }
 
-bool WalletModel::setWalletLocked(bool locked, const SecureString &passPhrase)
+bool WalletModel::setWalletLocked(bool locked, const SecureString &passPhrase, bool formint)
 {
     if(locked)
     {
         // Lock
+		if(formint) 
+            wallet->fWalletUnlockMintOnly=false; 
         return wallet->Lock();
     }
     else
     {
         // Unlock
-        return wallet->Unlock(passPhrase);
+        bool rc;
+        rc = wallet->Unlock(passPhrase);
+        if (rc && formint)
+            wallet->fWalletUnlockMintOnly=true;
+
+        return rc;
     }
 }
 
@@ -363,6 +370,12 @@ void WalletModel::unsubscribeFromCoreSignals()
 WalletModel::UnlockContext WalletModel::requestUnlock()
 {
     bool was_locked = getEncryptionStatus() == Locked;
+
+    if ((!was_locked) && wallet->fWalletUnlockMintOnly)
+    {
+        setWalletLocked(true);
+        was_locked = getEncryptionStatus() == Locked;
+    }
     if(was_locked)
     {
         // Request UI to unlock wallet
@@ -371,7 +384,7 @@ WalletModel::UnlockContext WalletModel::requestUnlock()
     // If wallet is still locked, unlock was failed or cancelled, mark context as invalid
     bool valid = getEncryptionStatus() != Locked;
 
-    return UnlockContext(this, valid, was_locked);
+    return UnlockContext(this, valid, was_locked && !wallet->fWalletUnlockMintOnly);
 }
 
 WalletModel::UnlockContext::UnlockContext(WalletModel *wallet, bool valid, bool relock):
