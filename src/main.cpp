@@ -2254,8 +2254,6 @@ bool ProcessBlock(CNode* pfrom, CBlock* pblock)
         bnNewBlock.SetCompact(pblock->nBits);
         CBigNum bnRequired;
 
-		CBlockIndex* pindexPrev = pindexBest;
-
 		if (pblock->IsProofOfStake()){
             bnRequired.SetCompact(ComputeMinStake(GetLastBlockIndex(pcheckpoint, true)->nBits, deltaTime, pblock->nTime));
 		}else{
