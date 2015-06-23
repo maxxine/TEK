@@ -4382,8 +4382,6 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
     // Make this thread recognisable as the mining thread
     RenameThread("tekcoin-miner");
 	
-    bool fTryToSync = true;
-
     // Each thread has its own key and counter
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
@@ -4392,9 +4390,8 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
     {
         if (fShutdown)
             return;
-        while (vNodes.empty() || IsInitialBlockDownload())
+        while (vNodes.empty() || IsInitialBlockDownload() || vNodes.size() < 2 || nBestHeight < GetNumBlocksOfPeers())
         {
-            fTryToSync = true;
             Sleep(1000);
             if (fShutdown)
                 return;
@@ -4407,16 +4404,6 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
             Sleep(1000);
             if (fShutdown)
                 return;
-        }
-
-		    if (fTryToSync)
-        {
-            fTryToSync = false;
-            if (vNodes.size() < 3 || nBestHeight < GetNumBlocksOfPeers())
-            {
-                Sleep(60000);
-                continue;
-            }
         }
 
         //
