@@ -291,6 +291,10 @@ void tekcoinGUI::createActions()
 	lockWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Lock Wallet"), this); 
     lockWalletAction->setStatusTip(tr("Lock the wallet")); 
     lockWalletAction->setCheckable(true);
+	
+    stakeMinerToggleAction = new QAction(this);
+    stakeMinerToggle(true);
+	
     backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet"), this);
     backupWalletAction->setToolTip(tr("Backup wallet to another location"));
     changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase"), this);
@@ -318,6 +322,7 @@ void tekcoinGUI::createActions()
     connect(unlockWalletforposAction, SIGNAL(triggered()), this, SLOT(unlockWalletForMint()));
 	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet())); //presstab
 	connect(lockWalletAction, SIGNAL(triggered()), this, SLOT(lockWallet()));
+    connect(stakeMinerToggleAction, SIGNAL(triggered()), this, SLOT(stakeMinerToggle()));
 	connect(blockAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
 }
 
@@ -341,6 +346,8 @@ void tekcoinGUI::createMenuBar()
     file->addAction(quitAction);
 
     QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
+	settings->addAction(stakeMinerToggleAction);
+	settings->addSeparator();
     settings->addAction(optionsAction);
 	
 	QMenu *wallet = appMenuBar->addMenu(tr("&Wallet")); 
@@ -986,6 +993,30 @@ void tekcoinGUI::lockWallet()
 //              "Proof of Stake has stopped.\n") 
 //           ,CClientUIInterface::MSG_INFORMATION); 
 } 
+
+// Enables or disables the internal stake miner;
+// only sets the menu icon and text on the initial run 
+void tekcoinGUI::stakeMinerToggle(bool fInitial) {
+    bool fStakingInt = fStaking;
+
+    if(fInitial) {
+        fStakingInt = GetBoolArg("-staking", fStaking);
+        fStakingInt = ~fStakingInt & 0x1;
+    }
+
+    if(fStakingInt) {
+        if(!fInitial) fStaking = false;
+        stakeMinerToggleAction->setIcon(QIcon(":/icons/staking_on"));
+        stakeMinerToggleAction->setText(tr("&Enable PoS mining"));
+    } else {
+        if(!fInitial) fStaking = true;
+        stakeMinerToggleAction->setIcon(QIcon(":/icons/staking_off"));
+        stakeMinerToggleAction->setText(tr("&Disable PoS mining"));
+    }
+
+    if(!fInitial)
+      updateStakingIcon();
+}
 
 void tekcoinGUI::showNormalIfMinimized(bool fToggleHidden)
 {
