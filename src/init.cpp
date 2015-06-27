@@ -225,6 +225,7 @@ std::string HelpMessage()
         "  -pid=<file>            " + _("Specify pid file (default: tekcoind.pid)") + "\n" +
         "  -gen                   " + _("Generate coins") + "\n" +
         "  -gen=0                 " + _("Don't generate coins") + "\n" +
+        "  -staking=<n>          " + _("Generate coin stakes (default: 1 = enabled)") + "\n" +
         "  -datadir=<dir>         " + _("Specify data directory") + "\n" +
         "  -wallet=<file>         " + _("Specify wallet file (within data directory)") + "\n" +
         "  -dbcache=<n>           " + _("Set database cache size in megabytes (default: 25)") + "\n" +
@@ -455,6 +456,9 @@ bool AppInit2()
         if (nTransactionFee > 0.25 * COIN)
             InitWarning(_("Warning: -paytxfee is set very high! This is the transaction fee you will pay if you send a transaction."));
     }
+	
+    // Controls proof-of-stake generation 
+    fStaking = GetBoolArg("-staking", true);
 
     // ********************************************************* Step 4: application initialization: dir lock, daemonize, pidfile, debug log
 

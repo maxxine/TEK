@@ -1305,10 +1305,12 @@ void static ProcessOneShot()
     }
 }
 
-// ppcoin: stake minter thread
+// tekcoin: stake minter thread
 void static ThreadStakeMinter(void* parg)
 {
+    while(!fShutdown) {
     printf("ThreadStakeMinter started\n");
+        if(fStaking) { 
     CWallet* pwallet = (CWallet*)parg;
     try
     {
@@ -1323,7 +1325,13 @@ void static ThreadStakeMinter(void* parg)
         vnThreadsRunning[THREAD_MINTER]--;
         PrintException(NULL, "ThreadStakeMinter()");
     }
-    printf("ThreadStakeMinter exiting, %d threads remaining\n", vnThreadsRunning[THREAD_MINTER]);
+            if(!fShutdown)
+              printf("ThreadStakeMinter paused, %d threads remaining\n", vnThreadsRunning[THREAD_MINTER]);
+        }
+        while(!fStaking && !fShutdown) Sleep(5000);
+        if(fShutdown)
+          printf("ThreadStakeMinter exited, %d threads remaining\n", vnThreadsRunning[THREAD_MINTER]);
+     }
 }
 
 void ThreadOpenConnections2(void* parg)
@@ -1887,7 +1895,10 @@ void StartNode(void* parg)
     if (!NewThread(ThreadDumpAddress, NULL))
         printf("Error; NewThread(ThreadDumpAddress) failed\n");
 
-    // ppcoin: mint proof-of-stake blocks in the background
+    // Mint proof-of-stake blocks in the background
+    if (!fStaking)
+        printf("Staking disabled\n");
+    else
     if (!NewThread(ThreadStakeMinter, pwalletMain))
         printf("Error: NewThread(ThreadStakeMinter) failed\n");
 

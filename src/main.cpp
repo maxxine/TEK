@@ -4384,7 +4384,7 @@ void tekcoinMiner(CWallet *pwallet, bool fProofOfStake)
     CReserveKey reservekey(pwallet);
     unsigned int nExtraNonce = 0;
 
-    while (fGeneratetekcoins || fProofOfStake)
+    while (fGeneratetekcoins || (fProofOfStake && fStaking))
     {
         if (fShutdown)
             return;
