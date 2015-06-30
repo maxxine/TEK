@@ -263,7 +263,6 @@ RESOURCES += \
 FORMS += \
     src/qt/forms/sendcoinsdialog.ui \
 	src/qt/forms/coincontroldialog.ui \
-	src/qt/forms/coincontroldialog.ui \
     src/qt/forms/addressbookpage.ui \
     src/qt/forms/signverifymessagedialog.ui \
     src/qt/forms/aboutdialog.ui \
