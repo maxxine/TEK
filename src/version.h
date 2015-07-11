@@ -4,12 +4,16 @@
 #ifndef tekcoin_VERSION_H
 #define tekcoin_VERSION_H
 
-#include "clientversion.h"
 #include <string>
 
 //
 // client versioning
 //
+
+#define CLIENT_VERSION_MAJOR       2
+#define CLIENT_VERSION_MINOR       2
+#define CLIENT_VERSION_REVISION    1
+#define CLIENT_VERSION_BUILD       1
 
 static const int CLIENT_VERSION =
                            1000000 * CLIENT_VERSION_MAJOR
@@ -46,10 +50,5 @@ static const int BIP0031_VERSION = 60000;
 
 // "mempool" command, enhanced "getdata" behavior starts with this version:
 static const int MEMPOOL_GD_VERSION = 60002;
-
-#define DISPLAY_VERSION_MAJOR       2
-#define DISPLAY_VERSION_MINOR       2
-#define DISPLAY_VERSION_REVISION    1
-#define DISPLAY_VERSION_BUILD       1
 
 #endif
