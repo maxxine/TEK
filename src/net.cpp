@@ -537,7 +537,11 @@ void CNode::CloseSocketDisconnect()
         printf("disconnecting node %s\n", addrName.c_str());
         closesocket(hSocket);
         hSocket = INVALID_SOCKET;
-        vRecvMsg.clear();
+
+        // in case this fails, we'll empty the recv buffer when the CNode is deleted
+        TRY_LOCK(cs_vRecvMsg, lockRecv);
+        if (lockRecv)
+            vRecvMsg.clear();
     }
 }
 
@@ -635,7 +639,7 @@ bool CNode::ReceiveMsgBytes(const char *pch, unsigned int nBytes)
     while (nBytes > 0) {
 
         // get current incomplete message, or create a new one
-        if (vRecvMsg.size() == 0 ||
+        if (vRecvMsg.empty() ||
             vRecvMsg.back().complete())
             vRecvMsg.push_back(CNetMessage(SER_NETWORK, nRecvVersion));
 
@@ -1688,6 +1692,9 @@ void ThreadMessageHandler2(void* parg)
             pnodeTrickle = vNodesCopy[GetRand(vNodesCopy.size())];
         BOOST_FOREACH(CNode* pnode, vNodesCopy)
         {
+            if (pnode->fDisconnect)
+                continue;
+
             // Receive messages
             {
                 TRY_LOCK(pnode->cs_vRecvMsg, lockRecv);
