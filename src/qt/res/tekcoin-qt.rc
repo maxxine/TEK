@@ -22,7 +22,7 @@ BEGIN
             VALUE "FileDescription",    "tekcoin-Qt (OSS GUI client for tekcoin)"
             VALUE "FileVersion",        VER_FILEVERSION_STR
             VALUE "InternalName",       "tekcoin-qt"
-            VALUE "LegalCopyright",     "2009-2012 The Bitcon developers, 2012-2014 The tekcoin & PPCoin developers, 2003 The tekcoin developer"
+            VALUE "LegalCopyright",     "2009-2012 The Bitcon developers, 2012-2014 The PPCoin developers, 2013-2015 The Tekcoin developers"
             VALUE "LegalTrademarks1",   "Distributed under the MIT/X11 software license, see the accompanying file COPYING or http://www.opensource.org/licenses/mit-license.php."
             VALUE "OriginalFilename",   "tekcoin-qt.exe"
             VALUE "ProductName",        "tekcoin-Qt"

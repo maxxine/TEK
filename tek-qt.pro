@@ -411,7 +411,7 @@ isEmpty(BOOST_INCLUDE_PATH) {
 
 # win32:LIBS += -lws2_32 -lshlwapi -lmswsock
 win32:DEFINES += WIN32
-win32:RC_FILE = src/qt/res/bitcoin-qt.rc
+win32:RC_FILE = src/qt/res/tekcoin-qt.rc
 
 win32:!contains(MINGW_THREAD_BUGFIX, 0) {
     # At least qmake's win32-g++-cross profile is missing the -lmingwthrd
