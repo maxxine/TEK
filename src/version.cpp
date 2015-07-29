@@ -8,7 +8,7 @@
 // Name of client reported in the 'version' message. Report the same name
 // for both tekcoind and tekcoin-qt, to make it harder for attackers to
 // target servers or GUI users specifically.
-const std::string CLIENT_NAME("tekcoin");
+const std::string CLIENT_NAME("TEKcoin");
 
 // Client version number
 #define CLIENT_VERSION_SUFFIX   "-TEK"
@@ -40,13 +40,11 @@ const std::string CLIENT_NAME("tekcoin");
 #    define GIT_COMMIT_DATE "$Format:%cD"
 #endif
 
-#define STRINGIFY(s) #s
-
 #define BUILD_DESC_FROM_COMMIT(maj,min,rev,build,commit) \
-    "v" STRINGIFY(maj) "." STRINGIFY(min) "." STRINGIFY(rev) "." STRINGIFY(build) "-g" commit
+    "v" DO_STRINGIZE(maj) "." DO_STRINGIZE(min) "." DO_STRINGIZE(rev) "." DO_STRINGIZE(build) "-g" commit
 
 #define BUILD_DESC_FROM_UNKNOWN(maj,min,rev,build) \
-    "v" STRINGIFY(maj) "." STRINGIFY(min) "." STRINGIFY(rev) "." STRINGIFY(build) // "-unk"
+    "v" DO_STRINGIZE(maj) "." DO_STRINGIZE(min) "." DO_STRINGIZE(rev) "." DO_STRINGIZE(build) // "-unk"
 
 #ifndef BUILD_DESC
 #    ifdef GIT_COMMIT_ID

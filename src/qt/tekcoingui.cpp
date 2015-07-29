@@ -82,7 +82,7 @@ tekcoinGUI::tekcoinGUI(QWidget *parent):
 	blockBrowser(0)
 {
     resize(850, 550);
-    setWindowTitle(tr("tekcoin") + " - " + tr("Wallet"));
+    setWindowTitle(tr("TEKcoin") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/tekcoin"));
     setWindowIcon(QIcon(":icons/tekcoin"));
