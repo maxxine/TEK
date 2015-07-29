@@ -248,7 +248,6 @@ HEADERS += src/qt/tekcoingui.h \
     src/qt/rpcconsole.h \
     src/version.h \
     src/netbase.h \
-    src/clientversion.h \
 	src/qt/blockbrowser.h
 
 SOURCES += src/qt/tekcoin.cpp src/qt/tekcoingui.cpp \
