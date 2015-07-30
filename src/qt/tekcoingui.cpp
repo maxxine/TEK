@@ -71,7 +71,9 @@ tekcoinGUI::tekcoinGUI(QWidget *parent):
     clientModel(0),
     walletModel(0),
     encryptWalletAction(0),
+    unlockWalletforposAction(0),
 	unlockWalletAction(0), //presstab
+	lockWalletAction(0),
     changePassphraseAction(0),
     aboutQtAction(0),
     trayIcon(0),
@@ -80,7 +82,7 @@ tekcoinGUI::tekcoinGUI(QWidget *parent):
 	blockBrowser(0)
 {
     resize(850, 550);
-    setWindowTitle(tr("tekcoin") + " - " + tr("Wallet"));
+    setWindowTitle(tr("TEKcoin") + " - " + tr("Wallet"));
 #ifndef Q_OS_MAC
     qApp->setWindowIcon(QIcon(":icons/tekcoin"));
     setWindowIcon(QIcon(":icons/tekcoin"));
@@ -268,7 +270,7 @@ void tekcoinGUI::createActions()
     aboutQtAction = new QAction(QIcon(":/trolltech/qmessagebox/images/qtlogo-64.png"), tr("About &Qt"), this);
     aboutQtAction->setToolTip(tr("Show information about Qt"));
     aboutQtAction->setMenuRole(QAction::AboutQtRole);
-    optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options..."), this);
+    optionsAction = new QAction(QIcon(":/icons/options"), tr("&Options"), this);
     optionsAction->setToolTip(tr("Modify configuration options for tekcoin"));
     optionsAction->setMenuRole(QAction::PreferencesRole);
     toggleHideAction = new QAction(QIcon(":/icons/tekcoin"), tr("&Show / Hide"), this);
@@ -276,19 +278,35 @@ void tekcoinGUI::createActions()
     encryptWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Encrypt Wallet"), this);
     encryptWalletAction->setToolTip(tr("Encrypt or decrypt wallet"));
     encryptWalletAction->setCheckable(true);
-	//presstab - adding in unlock wallet feature to gui
-	unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet"), this);
+
+    unlockWalletforposAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet For PoS"), this);
+    unlockWalletforposAction->setStatusTip(tr("Unlock the wallet for PoS"));
+    unlockWalletforposAction->setCheckable(true);
+
+    //presstab - adding in unlock wallet feature to gui
+    unlockWalletAction = new QAction(QIcon(":/icons/lock_open"), tr("&Unlock Wallet"), this);
     unlockWalletAction->setToolTip(tr("Unlock an Encrypted Wallet")); //hbn code is setStatusTip - doesn't match up here.  qt5 maybe?
     unlockWalletAction->setCheckable(true);
 	//presstab e
-    backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet..."), this);
+	lockWalletAction = new QAction(QIcon(":/icons/lock_closed"), tr("&Lock Wallet"), this); 
+    lockWalletAction->setStatusTip(tr("Lock the wallet")); 
+    lockWalletAction->setCheckable(true);
+	
+    stakeMinerToggleAction = new QAction(this);
+    stakeMinerToggle(true);
+	
+    backupWalletAction = new QAction(QIcon(":/icons/filesave"), tr("&Backup Wallet"), this);
     backupWalletAction->setToolTip(tr("Backup wallet to another location"));
-    changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase..."), this);
+    dumpWalletAction = new QAction(QIcon(":/icons/export2"), tr("&Export Wallet..."), this);
+    dumpWalletAction->setToolTip(tr("Export wallet's keys to a text file"));
+    importWalletAction = new QAction(QIcon(":/icons/import"), tr("&Import Wallet..."), this);
+    importWalletAction->setToolTip(tr("Import a file's keys into a wallet"));
+    changePassphraseAction = new QAction(QIcon(":/icons/key"), tr("&Change Passphrase"), this);
     changePassphraseAction->setToolTip(tr("Change the passphrase used for wallet encryption"));
-    signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message..."), this);
-    verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message..."), this);
+    signMessageAction = new QAction(QIcon(":/icons/edit"), tr("Sign &message"), this);
+    verifyMessageAction = new QAction(QIcon(":/icons/transaction_0"), tr("&Verify message"), this);
 
-    exportAction = new QAction(QIcon(":/icons/export"), tr("&Export..."), this);
+    exportAction = new QAction(QIcon(":/icons/export"), tr("&Export"), this);
     exportAction->setToolTip(tr("Export the data in the current tab to a file"));
     openRPCConsoleAction = new QAction(QIcon(":/icons/debugwindow"), tr("&Debug window"), this);
     openRPCConsoleAction->setToolTip(tr("Open debugging and diagnostic console"));
@@ -302,10 +320,15 @@ void tekcoinGUI::createActions()
     connect(toggleHideAction, SIGNAL(triggered()), this, SLOT(toggleHidden()));
     connect(encryptWalletAction, SIGNAL(triggered(bool)), this, SLOT(encryptWallet(bool)));
     connect(backupWalletAction, SIGNAL(triggered()), this, SLOT(backupWallet()));
+    connect(dumpWalletAction, SIGNAL(triggered()), this, SLOT(dumpWallet()));
+    connect(importWalletAction, SIGNAL(triggered()), this, SLOT(importWallet()));
     connect(changePassphraseAction, SIGNAL(triggered()), this, SLOT(changePassphrase()));
     connect(signMessageAction, SIGNAL(triggered()), this, SLOT(gotoSignMessageTab()));
     connect(verifyMessageAction, SIGNAL(triggered()), this, SLOT(gotoVerifyMessageTab()));
+    connect(unlockWalletforposAction, SIGNAL(triggered()), this, SLOT(unlockWalletForMint()));
 	connect(unlockWalletAction, SIGNAL(triggered()), this, SLOT(unlockWallet())); //presstab
+	connect(lockWalletAction, SIGNAL(triggered()), this, SLOT(lockWallet()));
+    connect(stakeMinerToggleAction, SIGNAL(triggered()), this, SLOT(stakeMinerToggle()));
 	connect(blockAction, SIGNAL(triggered()), this, SLOT(gotoBlockBrowser()));
 }
 
@@ -322,6 +345,10 @@ void tekcoinGUI::createMenuBar()
     // Configure the menus
     QMenu *file = appMenuBar->addMenu(tr("&File"));
     file->addAction(backupWalletAction);
+    file->addSeparator();
+    file->addAction(dumpWalletAction);
+    file->addAction(importWalletAction);
+    file->addSeparator();
     file->addAction(exportAction);
     file->addAction(signMessageAction);
     file->addAction(verifyMessageAction);
@@ -329,12 +356,17 @@ void tekcoinGUI::createMenuBar()
     file->addAction(quitAction);
 
     QMenu *settings = appMenuBar->addMenu(tr("&Settings"));
+	settings->addAction(stakeMinerToggleAction);
+	settings->addSeparator();
     settings->addAction(optionsAction);
 	
 	QMenu *wallet = appMenuBar->addMenu(tr("&Wallet")); 
     wallet->addAction(encryptWalletAction);
-	wallet->addAction(unlockWalletAction); //presstab
     wallet->addAction(changePassphraseAction);
+    wallet->addSeparator();
+    wallet->addAction(unlockWalletforposAction);
+	wallet->addAction(unlockWalletAction); //presstab
+	wallet->addAction(lockWalletAction);
 
     QMenu *help = appMenuBar->addMenu(tr("&Help"));
     help->addAction(openRPCConsoleAction);
@@ -830,29 +862,42 @@ void tekcoinGUI::setEncryptionStatus(int status)
     case WalletModel::Unencrypted:
         labelEncryptionIcon->hide();
         encryptWalletAction->setChecked(false);
+        unlockWalletforposAction->setChecked(false);
 		unlockWalletAction->setChecked(false); //presstab
+		lockWalletAction->setChecked(false);
         changePassphraseAction->setEnabled(false);
         encryptWalletAction->setEnabled(true);
+        unlockWalletforposAction->setEnabled(false);
+		unlockWalletAction->setEnabled(false);
+		lockWalletAction->setEnabled(false);
         break;
     case WalletModel::Unlocked:
         labelEncryptionIcon->show();
         labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_open").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
-        labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
+        labelEncryptionIcon->setToolTip(pwalletMain->fWalletUnlockMintOnly? tr("Wallet is <b>encrypted</b> and currently <b>unlocked for block minting only</b>") : tr("Wallet is <b>encrypted</b> and currently <b>unlocked</b>"));
         encryptWalletAction->setChecked(true);
+        unlockWalletforposAction->setChecked(true);
 		unlockWalletAction->setChecked(true); //presstab
+		lockWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        unlockWalletforposAction->setEnabled(false);
 		unlockWalletAction->setEnabled(false); //presstab
+		lockWalletAction->setEnabled(true);
         break;
     case WalletModel::Locked:
         labelEncryptionIcon->show();
         labelEncryptionIcon->setPixmap(QIcon(":/icons/lock_closed").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
         labelEncryptionIcon->setToolTip(tr("Wallet is <b>encrypted</b> and currently <b>locked</b>"));
         encryptWalletAction->setChecked(true);
+        unlockWalletAction->setChecked(true);
 		unlockWalletAction->setChecked(true);//presstab
+		lockWalletAction->setChecked(true);
         changePassphraseAction->setEnabled(true);
         encryptWalletAction->setEnabled(false); // TODO: decrypt currently not supported
+        unlockWalletforposAction->setEnabled(true);
 		unlockWalletAction->setEnabled(true); //presstab
+		lockWalletAction->setEnabled(false);
         break;
     }
 }
@@ -885,6 +930,93 @@ void tekcoinGUI::backupWallet()
     }
 }
 
+void tekcoinGUI::dumpWallet()
+{
+   if(!walletModel)
+      return;
+
+   WalletModel::UnlockContext ctx(walletModel->requestUnlock());
+   if(!ctx.isValid())
+   {
+       // Unlock wallet failed or was cancelled
+       return;
+   }
+
+#if QT_VERSION < 0x050000
+    QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#else
+    QString saveDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
+    QString filename = QFileDialog::getSaveFileName(this, tr("Export Wallet"), saveDir, tr("Wallet Text (*.txt)"));
+    if(!filename.isEmpty()) {
+        if(!walletModel->dumpWallet(filename)) {
+		
+            notificator->notify(Notificator::Warning, tr("Export Failed"),  tr("There was an error trying to save the wallet's keys to your location.\n"
+                            "Keys were not saved.\n"));
+		
+ //           message(tr("Export Failed"),
+//                         tr("There was an error trying to save the wallet's keys to your location.\n"
+//                            "Keys were not saved")
+//                      ,CClientUIInterface::MSG_ERROR);
+        }
+        else
+		
+            notificator->notify(Notificator::Warning, tr("Export Successful"),
+                       tr("Keys were saved to:\n %1")
+                       .arg(filename));
+		
+//            message(tr("Export Successful"),
+//                       tr("Keys were saved to:\n %1")
+//                       .arg(filename)
+//                      ,CClientUIInterface::MSG_INFORMATION);
+    }
+}
+
+void tekcoinGUI::importWallet()
+{
+   if(!walletModel)
+      return;
+
+   WalletModel::UnlockContext ctx(walletModel->requestUnlock());
+   if(!ctx.isValid())
+   {
+       // Unlock wallet failed or was cancelled
+       return;
+   }
+
+#if QT_VERSION < 0x050000
+    QString openDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
+#else
+    QString openDir = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
+#endif
+    QString filename = QFileDialog::getOpenFileName(this, tr("Import Wallet"), openDir, tr("Wallet Text (*.txt)"));
+    if(!filename.isEmpty()) {
+        if(!walletModel->importWallet(filename)) {
+		
+            notificator->notify(Notificator::Warning, tr("Import Failed"),
+                         tr("There was an error trying to import the file's keys into your wallet.\n"
+                            "Some or all keys were not imported from walletfile: %1")
+                         .arg(filename));
+							
+//            message(tr("Import Failed"),
+//                         tr("There was an error trying to import the file's keys into your wallet.\n"
+//                            "Some or all keys were not imported from walletfile: %1")
+//                         .arg(filename)
+//                      ,CClientUIInterface::MSG_ERROR);
+        }
+        else
+		
+            notificator->notify(Notificator::Warning, tr("Import Successful"),
+                       tr("Keys %1, were imported into wallet.")
+                       .arg(filename));
+		
+//            message(tr("Import Successful"),
+//                       tr("Keys %1, were imported into wallet.")
+//                       .arg(filename)
+//                      ,CClientUIInterface::MSG_INFORMATION);
+    }
+}
+
 void tekcoinGUI::changePassphrase()
 {
     AskPassphraseDialog dlg(AskPassphraseDialog::ChangePass, this);
@@ -902,10 +1034,86 @@ void tekcoinGUI::unlockWallet()
         AskPassphraseDialog dlg(AskPassphraseDialog::Unlock, this);
         dlg.setModel(walletModel);
         dlg.exec();
+		
+        // Only show message if unlock is sucessfull.
+        if(walletModel->getEncryptionStatus() == WalletModel::Unlocked)
+            notificator->notify(Notificator::Warning, tr("Unlock Wallet Information"),  tr("Wallet has been unlocked.\n" 
+               "Proof of Stake has started.\n"));
+			   
+ //         message(tr("Unlock Wallet Information"),
+ //                 tr("Wallet has been unlocked. \n"
+ //                    "Proof of Stake has started.\n")
+ //                 ,CClientUIInterface::MSG_INFORMATION);
    }
 }
 
+void tekcoinGUI::unlockWalletForMint()
+{
+    if(!walletModel)
+        return;
 
+    // Unlock wallet when requested by user
+    if(walletModel->getEncryptionStatus() == WalletModel::Locked)
+    {
+        AskPassphraseDialog dlg(AskPassphraseDialog::UnlockForMint, this);
+        dlg.setModel(walletModel);
+        dlg.exec();
+
+        // Only show message if unlock is sucessfull.
+        if(walletModel->getEncryptionStatus() == WalletModel::Unlocked)
+            notificator->notify(Notificator::Warning, tr("Unlock Wallet Information"),  tr("Wallet has been unlocked for staking only. \n" 
+               "Proof of Stake has started.\n"));
+
+//          message(tr("Unlock Wallet Information"),
+//                  tr("Wallet has been unlocked for staking only. \n"
+//                     "Proof of Stake has started.\n")
+//                  ,CClientUIInterface::MSG_INFORMATION);
+    }
+}
+
+void tekcoinGUI::lockWallet() 
+{ 
+    if(!walletModel) 
+        return; 
+ 
+    // Lock wallet when requested by user 
+    if(walletModel->getEncryptionStatus() == WalletModel::Unlocked) 
+        walletModel->setWalletLocked(true,"",true); 
+
+        // Only show message if lock is sucessfull.
+        if(walletModel->getEncryptionStatus() == WalletModel::Locked)		
+            notificator->notify(Notificator::Warning, tr("Lock Wallet Information"),  tr("Wallet has been locked.\n" 
+               "Proof of Stake has stopped.\n"));
+ 
+//    message(tr("Lock Wallet Information"), 
+//           tr("Wallet has been locked.\n" 
+//              "Proof of Stake has stopped.\n") 
+//           ,CClientUIInterface::MSG_INFORMATION); 
+} 
+
+// Enables or disables the internal stake miner;
+// only sets the menu icon and text on the initial run 
+void tekcoinGUI::stakeMinerToggle(bool fInitial) {
+    bool fStakingInt = fStaking;
+
+    if(fInitial) {
+        fStakingInt = GetBoolArg("-staking", fStaking);
+        fStakingInt = ~fStakingInt & 0x1;
+    }
+
+    if(fStakingInt) {
+        if(!fInitial) fStaking = false;
+        stakeMinerToggleAction->setIcon(QIcon(":/icons/staking_on"));
+        stakeMinerToggleAction->setText(tr("&Enable PoS mining"));
+    } else {
+        if(!fInitial) fStaking = true;
+        stakeMinerToggleAction->setIcon(QIcon(":/icons/staking_off"));
+        stakeMinerToggleAction->setText(tr("&Disable PoS mining"));
+    }
+
+    if(!fInitial)
+      updateStakingIcon();
+}
 
 void tekcoinGUI::showNormalIfMinimized(bool fToggleHidden)
 {
@@ -940,7 +1148,12 @@ void tekcoinGUI::updateStakingIcon()
     if (pwalletMain)
         pwalletMain->GetStakeWeight(*pwalletMain, nMinWeight, nMaxWeight, nWeight);
 
-    if (nLastCoinStakeSearchInterval && nWeight)
+     if (!fStaking)
+    {
+	labelStakingIcon->setPixmap(QIcon(":/icons/staking_off").pixmap(STATUSBAR_ICONSIZE,STATUSBAR_ICONSIZE));
+        labelStakingIcon->setToolTip(tr("Not staking because staking is disabled."));
+    }
+    else if (nLastCoinStakeSearchInterval && nWeight)
     {
         uint64_t nNetworkWeight = GetPoSKernelPS();
         unsigned nEstimateTime = nStakeTargetSpacing * nNetworkWeight / nWeight;
@@ -973,7 +1186,7 @@ void tekcoinGUI::updateStakingIcon()
             labelStakingIcon->setToolTip(tr("Not staking because wallet is locked"));
         else if (vNodes.empty())
             labelStakingIcon->setToolTip(tr("Not staking because wallet is offline"));
-        else if (clientModel->getNumConnections() < 3 )
+        else if (clientModel->getNumConnections() < 2 )
             labelStakingIcon->setToolTip(tr("Not staking because wallet is still acquiring nodes"));
         else if (IsInitialBlockDownload() || clientModel->getNumBlocks() < clientModel->getNumBlocksOfPeers())
             labelStakingIcon->setToolTip(tr("Not staking because wallet is syncing"));

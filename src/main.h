@@ -42,9 +42,9 @@ inline bool MoneyRange(int64 nValue) { return (nValue >= 0 && nValue <= MAX_MONE
 // Threshold for nLockTime: below this value it is interpreted as block number, otherwise as UNIX timestamp.
 static const unsigned int LOCKTIME_THRESHOLD = 500000000; // Tue Nov  5 00:53:20 1985 UTC
 /** Split Threshold Default */ 
-static const int64 DEF_SPLIT_AMOUNT = 30 * COIN; 
+static const int64 DEF_SPLIT_AMOUNT = 2000 * COIN; 
 /** Split Threshold Max */
-static const int64 MAX_SPLIT_AMOUNT = 1010 * COIN; 
+static const int64 MAX_SPLIT_AMOUNT = 15000 * COIN; 
 
 #ifdef USE_UPNP
 static const int fHaveUPnP = true;

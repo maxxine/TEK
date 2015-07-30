@@ -68,7 +68,6 @@
 		<Unit filename="bignum.h" />
 		<Unit filename="checkpoints.cpp" />
 		<Unit filename="checkpoints.h" />
-		<Unit filename="clientversion.h" />
 		<Unit filename="compat.h" />
 		<Unit filename="crypter.cpp" />
 		<Unit filename="crypter.h" />

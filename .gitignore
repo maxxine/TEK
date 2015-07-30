@@ -1,0 +1,22 @@
+src/*.exe
+src/build.h
+.*.swp
+*.*~*
+*.bak
+*.rej
+*.orig
+*.o
+#compilation and Qt preprocessor part
+*.qm
+Makefile
+#qt creator
+*.pro.user
+#mac specific
+.DS_Store
+build
+*.plist
+*.xcodeproj
+PortIndex*
+dist
+*.app
+*.dmg
