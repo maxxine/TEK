@@ -46,13 +46,26 @@ void SendCoinsEntry::on_addressBookButton_clicked()
 {
     if(!model)
         return;
-    AddressBookPage dlg(AddressBookPage::ForSending, AddressBookPage::SendingTab, this);
-    dlg.setModel(model->getAddressTableModel());
-    if(dlg.exec())
+    if (model->getSplitBlock())
     {
-        ui->payTo->setText(dlg.getReturnValue());
-        ui->payAmount->setFocus();
+        AddressBookPage dlg(AddressBookPage::ForSending, AddressBookPage::ReceivingTab, this); 
+		dlg.setModel(model->getAddressTableModel()); 
+		if(dlg.exec()) 
+		{ 
+			ui->payTo->setText(dlg.getReturnValue()); 
+			ui->payAmount->setFocus(); 
+		}
     }
+	else 
+	{ 
+		AddressBookPage dlg(AddressBookPage::ForSending, AddressBookPage::SendingTab, this); 
+		dlg.setModel(model->getAddressTableModel()); 
+		if(dlg.exec()) 
+		{ 
+			ui->payTo->setText(dlg.getReturnValue()); 
+			ui->payAmount->setFocus(); 
+		} 
+	}
 }
 
 void SendCoinsEntry::on_payTo_textChanged(const QString &address)

@@ -129,7 +129,7 @@ bool WalletModel::validateAddress(const QString &address)
     return addressParsed.IsValid();
 }
 
-WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl) //presstab
+WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipient> &recipients, int nSplitBlock, const CCoinControl *coinControl) //presstab
 {
     qint64 total = 0;
     QSet<QString> setAddress;
@@ -194,7 +194,7 @@ WalletModel::SendCoinsReturn WalletModel::sendCoins(const QList<SendCoinsRecipie
         CWalletTx wtx;
         CReserveKey keyChange(wallet);
         int64 nFeeRequired = 0;
-        bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, coinControl); //presstab
+        bool fCreated = wallet->CreateTransaction(vecSend, wtx, keyChange, nFeeRequired, nSplitBlock, coinControl); //presstab
 
         if(!fCreated)
         {
@@ -334,6 +334,15 @@ void WalletModel::getStakeWeightFromValue(const int64& nTime, const int64& nValu
    wallet->GetStakeWeightFromValue(nTime, nValue, nWeight);
 }
 
+void WalletModel::setSplitBlock(bool fSplitBlock) 
+ { 
+	wallet->fSplitBlock = fSplitBlock; 
+ } 
+  
+bool WalletModel::getSplitBlock() 
+ { 
+	return wallet->fSplitBlock; 
+ }
 
 // Handlers for core signals
 static void NotifyKeyStoreStatusChanged(WalletModel *walletmodel, CCryptoKeyStore *wallet)
@@ -487,3 +496,9 @@ void WalletModel::listLockedCoins(std::vector<COutPoint>& vOutpts)
 {
     return;
 }
+
+bool WalletModel::isMine(const CtekcoinAddress &address)
+{
+	return IsMine(*wallet, address.Get());
+}
+

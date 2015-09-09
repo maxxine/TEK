@@ -1,5 +1,5 @@
 // Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2013  The tekcoin developer
+// Copyright (c) 2013-2015 The TEKcoin developers
 // Distributed under the MIT/X11 software license, see the accompanying
 // file COPYING or http://www.opensource.org/licenses/mit-license.php.
 #ifndef tekcoin_WALLET_H
@@ -85,6 +85,7 @@ public:
     bool fFileBacked;
     std::string strWalletFile;
     bool fWalletUnlockMintOnly;
+	bool fSplitBlock;
 
     std::set<int64> setKeyPool;
     std::map<CKeyID, CKeyMetadata> mapKeyMetadata;
@@ -103,6 +104,7 @@ public:
         pwalletdbEncryption = NULL;
         nOrderPosNext = 0;
         fWalletUnlockMintOnly = false;
+		fSplitBlock = false;
     }
     CWallet(std::string strWalletFileIn)
     {
@@ -114,6 +116,7 @@ public:
         pwalletdbEncryption = NULL;
         nOrderPosNext = 0;
         fWalletUnlockMintOnly = false;
+		fSplitBlock = false;
     }
 
     std::map<uint256, CWalletTx> mapWallet;
@@ -183,7 +186,7 @@ public:
     int64 GetImmatureBalance() const;
     int64 GetStake() const;
     int64 GetNewMint() const;
-	bool CreateTransaction(const std::vector<std::pair<CScript, int64> >& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, const CCoinControl *coinControl=NULL); //presstab
+	bool CreateTransaction(const std::vector<std::pair<CScript, int64> >& vecSend, CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, int nSplitBlock, const CCoinControl *coinControl=NULL); //presstab
     bool CreateTransaction(CScript scriptPubKey, int64 nValue, CWalletTx& wtxNew, CReserveKey& reservekey, int64& nFeeRet, const CCoinControl *coinControl=NULL); //presstab
     bool CommitTransaction(CWalletTx& wtxNew, CReserveKey& reservekey);
 	bool GetStakeWeightFromValue(const int64& nTime, const int64& nValue, uint64& nWeight); //presstab - weight in coin control dialog

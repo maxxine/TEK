@@ -17,6 +17,7 @@ class COutput;
 class COutPoint;
 class uint256;
 class CCoinControl; //presstab e
+class CtekcoinAddress;
 
 QT_BEGIN_NAMESPACE
 class QTimer;
@@ -86,7 +87,7 @@ public:
     };
 
     // Send coins to a list of recipients
-    SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients, const CCoinControl *coinControl=NULL); //presstab
+    SendCoinsReturn sendCoins(const QList<SendCoinsRecipient> &recipients, int SplitBlock, const CCoinControl *coinControl=NULL); //presstab
 
     // Wallet encryption
     bool setWalletEncrypted(bool encrypted, const SecureString &passphrase);
@@ -102,6 +103,9 @@ public:
 	
 	//PoS Information about value and time presstab
     void getStakeWeightFromValue(const qint64& nTime, const qint64& nValue, quint64& nWeight);
+	
+	void setSplitBlock(bool fSplitBlock); 
+	bool getSplitBlock();
 
     // RAI object for unlocking wallet, returned by requestUnlock()
     class UnlockContext
@@ -134,6 +138,7 @@ public:
     void unlockCoin(COutPoint& output);
     void listLockedCoins(std::vector<COutPoint>& vOutpts); 
 	//presstab e
+    bool isMine(const CtekcoinAddress &address);
 private:
     CWallet *wallet;
 

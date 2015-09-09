@@ -32,6 +32,7 @@ public:
 
     void pasteEntry(const SendCoinsRecipient &rv);
     bool handleURI(const QString &uri);
+    bool fSplitBlock;
 
 public slots:
     void clear();
@@ -65,6 +66,8 @@ private slots:
     void coinControlClipboardLowOutput();
     void coinControlClipboardChange();
 	//presstab e
+    void coinControlSplitBlockChecked(int);
+    void splitBlockLineEditChanged(const QString & text);
 };
 
 #endif // SENDCOINSDIALOG_H
