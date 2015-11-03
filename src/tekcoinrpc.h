@@ -139,6 +139,7 @@ extern json_spirit::Value dumpprivkey(const json_spirit::Array& params, bool fHe
 extern json_spirit::Value dumpwallet(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value importprivkey(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value importwallet(const json_spirit::Array& params, bool fHelp);
+extern json_spirit::Value ntptime(const json_spirit::Array& params, bool fHelp);
 extern json_spirit::Value sendalert(const json_spirit::Array& params, bool fHelp);
 
 extern json_spirit::Value getgenerate(const json_spirit::Array& params, bool fHelp); // in rpcmining.cpp

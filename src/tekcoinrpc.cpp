@@ -215,6 +215,7 @@ static const CRPCCommand vRPCCommands[] =
     { "getnetworkhashps",       &getnetworkhashps,       true,   false },
     { "getnewaddress",          &getnewaddress,          true,   false },
     { "getnewpubkey",           &getnewpubkey,           true,   false },
+    { "ntptime",                &ntptime,                true,   true  },
     { "getaccountaddress",      &getaccountaddress,      true,   false },
     { "setaccount",             &setaccount,             true,   false },
     { "getaccount",             &getaccount,             false,  false },

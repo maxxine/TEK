@@ -1258,25 +1258,41 @@ void ShrinkDebugFile()
 //  - Median of other nodes clocks
 //  - The user (asking the user to fix the system clock if the first two disagree)
 //
-static int64 nMockTime = 0;  // For unit testing
 
+// System clock
 int64 GetTime()
 {
-    if (nMockTime) return nMockTime;
-
     return time(NULL);
 }
 
-void SetMockTime(int64 nMockTimeIn)
+// Trusted NTP offset or median of NTP samples.
+extern int64 nNtpOffset;
+
+// Median of time samples given by other nodes.
+static int64 nNodesOffset = INT64_MAX;
+
+// Select time offset:
+int64 GetTimeOffset()
 {
-    nMockTime = nMockTimeIn;
+    // If NTP and system clock are in agreement within 40 minutes, then use NTP.
+    if (abs64(nNtpOffset) < 40 * 60)
+        return nNtpOffset;
+
+    // If not, then choose between median peer time and system clock.
+    if (abs64(nNodesOffset) < 70 * 60)
+        return nNodesOffset;
+
+    return 0;
 }
 
-static int64 nTimeOffset = 0;
+int64 GetNodesOffset()
+{
+        return nNodesOffset;
+}
 
 int64 GetAdjustedTime()
 {
-    return GetTime() + nTimeOffset;
+    return GetTime() + GetTimeOffset();
 }
 
 void AddTimeData(const CNetAddr& ip, int64 nTime)
@@ -1298,17 +1314,17 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
         // Only let other nodes change our time by so much
         if (abs64(nMedian) < 70 * 60)
         {
-            nTimeOffset = nMedian;
+            nNodesOffset = nMedian;
         }
         else
         {
-            nTimeOffset = 0;
+            nNodesOffset = INT64_MAX;
 
             static bool fDone;
             if (!fDone)
             {
-                // If nobody has a time different than ours but within 5 minutes of ours, give a warning
                 bool fMatch = false;
+                // If nobody has a time different than ours but within 5 minutes of ours, give a warning
                 BOOST_FOREACH(int64 nOffset, vSorted)
                     if (nOffset != 0 && abs64(nOffset) < 5 * 60)
                         fMatch = true;
@@ -1328,7 +1344,8 @@ void AddTimeData(const CNetAddr& ip, int64 nTime)
                 printf("%+"PRI64d"  ", n);
             printf("|  ");
         }
-        printf("nTimeOffset = %+"PRI64d"  (%+"PRI64d" minutes)\n", nTimeOffset, nTimeOffset/60);
+        if (nNodesOffset != INT64_MAX)
+            printf("nNodesOffset = %+" PRI64d "  (%+" PRI64d " minutes)\n", nNodesOffset, nNodesOffset/60);
     }
 }
 
