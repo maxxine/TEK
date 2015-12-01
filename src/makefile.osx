@@ -74,6 +74,7 @@ OBJS= \
     obj/version.o \
     obj/checkpoints.o \
     obj/netbase.o \
+    obj/ntp.o \
     obj/addrman.o \
     obj/crypter.o \
     obj/key.o \

@@ -7,6 +7,8 @@
 #include "walletdb.h"
 #include "tekcoinrpc.h"
 #include "init.h"
+#include "util.h"
+#include "ntp.h"
 #include "base58.h"
 
 using namespace json_spirit;
@@ -70,7 +72,7 @@ Value getinfo(const Array& params, bool fHelp)
     proxyType proxy;
     GetProxy(NET_IPV4, proxy);
 
-    Object obj;
+    Object obj, timestamping;
     obj.push_back(Pair("version",       FormatFullVersion()));
     obj.push_back(Pair("protocolversion",(int)PROTOCOL_VERSION));
     obj.push_back(Pair("walletversion", pwalletMain->GetVersion()));
@@ -79,6 +81,18 @@ Value getinfo(const Array& params, bool fHelp)
     obj.push_back(Pair("stake",         ValueFromAmount(pwalletMain->GetStake())));
 	obj.push_back(Pair("split threshold",   ValueFromAmount(nSplitThreshold)));
     obj.push_back(Pair("blocks",        (int)nBestHeight));
+
+    timestamping.push_back(Pair("systemclock", (boost::int64_t)GetTime()));
+    timestamping.push_back(Pair("adjustedtime", (boost::int64_t)GetAdjustedTime()));
+
+    int64 nNtpOffset = GetNtpOffset(),
+          nP2POffset = GetNodesOffset();
+
+    timestamping.push_back(Pair("ntpoffset", (boost::int64_t)nNtpOffset != INT64_MAX ? (boost::int64_t)nNtpOffset : Value::null));
+    timestamping.push_back(Pair("p2poffset", (boost::int64_t)nP2POffset != INT64_MAX ? (boost::int64_t)nP2POffset : Value::null));
+
+    obj.push_back(Pair("timestamping", timestamping));
+	
     obj.push_back(Pair("moneysupply",   ValueFromAmount(pindexBest->nMoneySupply)));
     obj.push_back(Pair("connections",   (int)vNodes.size()));
     obj.push_back(Pair("proxy",         (proxy.first.IsValid() ? proxy.first.ToStringIPPort() : string())));

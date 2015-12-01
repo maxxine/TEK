@@ -187,13 +187,13 @@ void SendCoinsDialog::on_sendButton_clicked()
 		else 
 		{ 
 #if QT_VERSION < 0x050000 
-		formatted.append(tr("<b>%1</b> in %4 blocks of %5 TRK each to %2 (%3)?").arg(tekcoinUnits::formatWithUnit(tekcoinUnits::BTC, rcp.amount),  
+		formatted.append(tr("<b>%1</b> in %4 blocks of %5 TEK each to %2 (%3)?").arg(tekcoinUnits::formatWithUnit(tekcoinUnits::BTC, rcp.amount),  
 			Qt::escape(rcp.label),  
 			rcp.address,  
 			QString::number(nSplitBlock),  
 			tekcoinUnits::formatWithUnit(tekcoinUnits::BTC, rcp.amount / nSplitBlock)));
 #else 
-		formatted.append(tr("<b>%1</b> in %4 blocks of %5 TRK each to %2 (%3)?").arg(tekcoinUnits::formatWithUnit(tekcoinUnits::BTC, rcp.amount),  
+		formatted.append(tr("<b>%1</b> in %4 blocks of %5 TEK each to %2 (%3)?").arg(tekcoinUnits::formatWithUnit(tekcoinUnits::BTC, rcp.amount),  
 			rcp.label.toHtmlEscaped(),  
 			rcp.address,  
 			QString::number(nSplitBlock),  
