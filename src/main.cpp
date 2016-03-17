@@ -2931,7 +2931,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         CAddress addrFrom;
         uint64 nNonce = 1;
         vRecv >> pfrom->nVersion >> pfrom->nServices >> nTime >> addrMe;
-        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+//        if (pfrom->nVersion < MIN_PEER_PROTO_VERSION)
+        if (nTime > 1459976400 && pfrom->nVersion < MIN_PEER_PROTO_VERSION) // Wed, 06 Apr 2016 21:00:00 GMT
         {
             // Disconnect from peers older than this proto version
             printf("partner %s using obsolete version %i; disconnecting\n", pfrom->addr.ToString().c_str(), pfrom->nVersion);
