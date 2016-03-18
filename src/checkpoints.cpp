@@ -368,7 +368,7 @@ static MapCheckpoints mapCheckpointsTestnet =
 }
 
 // ppcoin: sync-checkpoint master key
-const std::string CSyncCheckpoint::strMasterPubKey = "045351ad7e38ea2f3efa5b1ccc8ef06a4ccd757116deb202e66f223cd6d3f128a36c0698c54e34f4c65494ecc78938f9b5ccf76d1eb5987d2d4d2149e3f375bbe2";                                                                          
+const std::string CSyncCheckpoint::strMasterPubKey = "04452d601cb65347ff41dea51115a82616e93155e7aa1bc2960ee43ca42c518e400ec77a407b47370162fc31ad04cad7701b43706ec8840acfa6d658765a8056e2";                                                                          
 
 std::string CSyncCheckpoint::strMasterPrivKey = "";
 
